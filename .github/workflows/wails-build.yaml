@@ -1,0 +1,92 @@
+name: Wails build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.10.0
+
+      - name: Set up Git
+        run: git config --global user.email "actions@github.com" && git config --global user.name "GitHub Actions"
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Extract Version
+        id: extract_version
+        shell: bash
+        run: |
+          version=$(jq -r '.info.productVersion' ./wails.json)
+          echo "Version extracted from wails.json: $version"
+          echo "CURRENT_VERSION=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Bump Version
+        id: bump_version
+        shell: bash
+        run: |
+          IFS='.' read -ra version_parts <<< "${{ steps.extract_version.outputs.CURRENT_VERSION }}"
+          major="${version_parts[0]}"
+          minor="${version_parts[1]}"
+          patch="${version_parts[2]}"
+
+          patch=$((patch + 1))
+
+          new_version="$major.$minor.$patch"
+          echo "Bumped version to: $new_version"
+          echo "BUILD_VERSION=$new_version" >> "$GITHUB_OUTPUT"
+
+          jq --arg new_version "$new_version" '.info.productVersion = $new_version' ./wails.json > temp_wails.json
+          mv temp_wails.json ./wails.json
+
+      - name: Commit and Push bump
+        run: |
+          git add wails.json
+          git commit -m "Bump version to v${{ steps.bump_version.outputs.BUILD_VERSION }}"
+          git push
+
+      - name: Setup GoLang
+        uses: actions/setup-go@v4
+        with:
+          check-latest: true
+          go-version: 1.21.3
+
+      - name: Install Wails
+        run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.6.0
+        shell: bash
+
+      - name: Build Windows App
+        working-directory: .
+        run: wails build --clean --platform windows/amd64 -o PalworldDSGui.exe
+        shell: bash
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: PalworldDSGui.exe
+          path: ./build/bin/PalworldDSGui.exe
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./build/bin/PalworldDSGui.exe
+          tag_name: v${{ steps.bump_version.outputs.BUILD_VERSION }}
+          name: Release v${{ steps.bump_version.outputs.BUILD_VERSION }}
+          body: |
+            ## Changelog
+            No changelog available yet.
