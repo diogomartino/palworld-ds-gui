@@ -14,6 +14,10 @@ export function Init(arg1) {
   return window['go']['dedicatedserver']['DedicatedServer']['Init'](arg1);
 }
 
+export function MonitorServerProcess() {
+  return window['go']['dedicatedserver']['DedicatedServer']['MonitorServerProcess']();
+}
+
 export function ReadConfig() {
   return window['go']['dedicatedserver']['DedicatedServer']['ReadConfig']();
 }

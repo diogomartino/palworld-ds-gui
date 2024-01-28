@@ -27,6 +27,7 @@ type AppConfig struct {
 	ServerPath              string
 	ServerExe               string
 	ServerDefaultConfigPath string
+	ServerConfigDir         string
 	ServerConfigPath        string
 	ServerProcessName       string
 	AppId                   string
@@ -38,6 +39,7 @@ var Config AppConfig = AppConfig{
 	ServerPath:              filepath.Join(GetCurrentDir(), "server"),
 	ServerExe:               filepath.Join(GetCurrentDir(), "server", "PalServer.exe"),
 	ServerDefaultConfigPath: filepath.Join(GetCurrentDir(), "server", "DefaultPalWorldSettings.ini"),
+	ServerConfigDir:         filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer"),
 	ServerConfigPath:        filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini"),
 	ServerProcessName:       "PalServer-Win64-Test-Cmd.exe",
 	SteamCmdUrl:             "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
@@ -97,6 +99,21 @@ func FindProcessByName(processName string) (ps.Process, error) {
 	}
 
 	return nil, fmt.Errorf("process with name %s not found", processName)
+}
+
+func FindProcessByPid(pid int) (ps.Process, error) {
+	processes, err := ps.Processes()
+	if err != nil {
+		return nil, fmt.Errorf("error listing processes: %v", err)
+	}
+
+	for _, process := range processes {
+		if process.Pid() == pid {
+			return process, nil
+		}
+	}
+
+	return nil, fmt.Errorf("process with pid %d not found", pid)
 }
 
 func KillProcessByPid(pid int) error {

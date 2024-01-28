@@ -81,6 +81,25 @@ func (d *DedicatedServer) DownloadDedicatedServer() {
 	}
 }
 
+func (d *DedicatedServer) MonitorServerProcess() {
+	for {
+		time.Sleep(4 * time.Second)
+
+		// was killed via gui
+		if d.serverPid == 0 {
+			break
+		}
+
+		proc, err := utils.FindProcessByPid(d.serverPid)
+
+		if proc == nil || err != nil {
+			Print("Server seems to have stopped (crashed?)")
+			runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STOPPED")
+			break
+		}
+	}
+}
+
 func (d *DedicatedServer) Start() {
 	Print("Starting dedicated server...")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STARTING")
@@ -130,6 +149,8 @@ func (d *DedicatedServer) Start() {
 
 	Print("Server started")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STARTED")
+
+	go d.MonitorServerProcess()
 }
 
 func (d *DedicatedServer) Stop() {
@@ -154,6 +175,7 @@ func (d *DedicatedServer) Stop() {
 
 	Print("Server stopped")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STOPPED")
+	d.serverPid = 0
 }
 
 func (d *DedicatedServer) Restart() {
@@ -195,7 +217,12 @@ func (d *DedicatedServer) ReadConfig() string {
 }
 
 func (d *DedicatedServer) WriteConfig(configString string) {
+	if _, err := os.Stat(utils.Config.ServerConfigDir); os.IsNotExist(err) {
+		os.MkdirAll(utils.Config.ServerConfigDir, 0755)
+	}
+
 	if _, err := os.Stat(utils.Config.ServerConfigPath); os.IsNotExist(err) {
+
 		_, err := os.Create(utils.Config.ServerConfigPath)
 		if err != nil {
 			panic(err)

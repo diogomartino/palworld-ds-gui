@@ -8,6 +8,8 @@ export function DownloadDedicatedServer():Promise<void>;
 
 export function Init(arg1:context.Context):Promise<void>;
 
+export function MonitorServerProcess():Promise<void>;
+
 export function ReadConfig():Promise<string>;
 
 export function Restart():Promise<void>;
