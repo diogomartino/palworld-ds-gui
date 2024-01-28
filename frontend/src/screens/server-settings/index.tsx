@@ -5,13 +5,17 @@ import { configLabels, configTypes } from '../../types/server-config';
 import { useState } from 'react';
 import { DesktopApi } from '../../desktop';
 
-const InputProvider = ({ label, value, type, onChange }) => {
+const InputProvider = ({ label, value, type, onChange, onToggleSwitch }) => {
   if (type === 'string' || type === 'number') {
     return <Input label={label} value={value} onChange={onChange} />;
   }
 
   if (type === 'boolean') {
-    return <Switch defaultSelected={value}>{label}</Switch>;
+    return (
+      <Switch defaultSelected={value} onChange={onToggleSwitch}>
+        {label}
+      </Switch>
+    );
   }
 
   return null;
@@ -46,6 +50,12 @@ const ServerSettings = () => {
                 setConfig((prev) => ({
                   ...prev,
                   [key]: e.target.value
+                }));
+              }}
+              onToggleSwitch={() => {
+                setConfig((prev) => ({
+                  ...prev,
+                  [key]: !config[key]
                 }));
               }}
             />
