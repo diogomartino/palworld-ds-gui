@@ -33,6 +33,7 @@ The default settings are the official settings. You can change them to your liki
 - Multiple map management
 - User profiles management
 - Automated imports of local worlds
+- Resource usage graphs (CPU, RAM, etc)
 
 ### Requirements
 
