@@ -8,6 +8,10 @@ export const setConfig = (config: TConfig) => {
   store.dispatch(serverSliceActions.setConfig(config));
 };
 
+export const setSaveName = (saveName: string) => {
+  store.dispatch(serverSliceActions.setSaveName(saveName));
+};
+
 export const setStatus = (status: ServerStatus) => {
   store.dispatch(serverSliceActions.setStatus(status));
 };

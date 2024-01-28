@@ -24,6 +24,7 @@ const useEventsInit = () => {
 
         if (status === LoadingStatus.DONE) {
           DesktopApi.server.readConfig();
+          DesktopApi.server.readSaveName();
         }
       },
       unsubscribes

@@ -2,9 +2,11 @@ package dedicatedserver
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"palword-ds-gui/utils"
+	"regexp"
 	"strings"
 	"time"
 
@@ -256,6 +258,46 @@ func (d *DedicatedServer) WriteConfig(configString string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (d *DedicatedServer) ReadSaveName() string {
+	// If file doesn't exist yet, return empty string (user hasn't joined the server for the first time yet)
+	if _, err := os.Stat(utils.Config.ServerGameUserSettingsPath); os.IsNotExist(err) {
+		return ""
+	}
+
+	settingsData, err := os.ReadFile(utils.Config.ServerGameUserSettingsPath)
+	if err != nil {
+		panic(err)
+	}
+
+	settingsString := strings.TrimSpace(string(settingsData))
+	re := regexp.MustCompile(`DedicatedServerName=([^\s]+)`)
+	match := re.FindStringSubmatch(settingsString)
+
+	if len(match) == 2 {
+		return match[1]
+	}
+
+	return ""
+}
+
+func (d *DedicatedServer) WriteSaveName(newSaveName string) error {
+	settingsData, err := os.ReadFile(utils.Config.ServerGameUserSettingsPath)
+	if err != nil {
+		return err
+	}
+
+	settingsString := strings.TrimSpace(string(settingsData))
+	re := regexp.MustCompile(`DedicatedServerName=([^\s]+)`)
+	settingsString = re.ReplaceAllString(settingsString, fmt.Sprintf("DedicatedServerName=%s", newSaveName))
+
+	err = os.WriteFile(utils.Config.ServerGameUserSettingsPath, []byte(settingsString), os.ModePerm)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (d *DedicatedServer) Dispose() {

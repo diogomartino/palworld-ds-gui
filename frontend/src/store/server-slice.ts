@@ -3,12 +3,14 @@ import { TConfig } from '../types/server-config';
 import { ServerStatus } from '../types';
 
 export interface IServerState {
-  config: TConfig;
+  config: TConfig; // PalWorldSettings.ini
+  saveName: string; // GameUserSettings.ini -> DedicatedServerName
   status: ServerStatus;
 }
 
 const initialState: IServerState = {
   config: {} as TConfig,
+  saveName: '',
   status: ServerStatus.STOPPED
 };
 
@@ -21,6 +23,9 @@ export const serverSlice = createSlice({
     },
     setStatus: (state, action) => {
       state.status = action.payload;
+    },
+    setSaveName: (state, action) => {
+      state.saveName = action.payload;
     }
   }
 });

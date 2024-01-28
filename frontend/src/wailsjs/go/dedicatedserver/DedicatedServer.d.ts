@@ -14,6 +14,8 @@ export function MonitorServerProcess():Promise<void>;
 
 export function ReadConfig():Promise<string>;
 
+export function ReadSaveName():Promise<string>;
+
 export function Restart():Promise<void>;
 
 export function Start():Promise<void>;
@@ -23,3 +25,5 @@ export function Stop():Promise<void>;
 export function Update():Promise<void>;
 
 export function WriteConfig(arg1:string):Promise<void>;
+
+export function WriteSaveName(arg1:string):Promise<void>;

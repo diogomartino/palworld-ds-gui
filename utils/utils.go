@@ -21,29 +21,31 @@ type ConsoleEntry struct {
 }
 
 type AppConfig struct {
-	SteamCmdPath            string
-	SteamCmdUrl             string
-	SteamCmdExe             string
-	ServerPath              string
-	ServerExe               string
-	ServerDefaultConfigPath string
-	ServerConfigDir         string
-	ServerConfigPath        string
-	ServerProcessName       string
-	AppId                   string
+	SteamCmdPath               string
+	SteamCmdUrl                string
+	SteamCmdExe                string
+	ServerPath                 string
+	ServerExe                  string
+	ServerDefaultConfigPath    string
+	ServerConfigDir            string
+	ServerConfigPath           string
+	ServerGameUserSettingsPath string
+	ServerProcessName          string
+	AppId                      string
 }
 
 var Config AppConfig = AppConfig{
-	SteamCmdPath:            filepath.Join(GetCurrentDir(), "steamcmd"),
-	SteamCmdExe:             filepath.Join(GetCurrentDir(), "steamcmd", "steamcmd.exe"),
-	ServerPath:              filepath.Join(GetCurrentDir(), "server"),
-	ServerExe:               filepath.Join(GetCurrentDir(), "server", "PalServer.exe"),
-	ServerDefaultConfigPath: filepath.Join(GetCurrentDir(), "server", "DefaultPalWorldSettings.ini"),
-	ServerConfigDir:         filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer"),
-	ServerConfigPath:        filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini"),
-	ServerProcessName:       "PalServer-Win64-Test-Cmd.exe",
-	SteamCmdUrl:             "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
-	AppId:                   "2394010",
+	SteamCmdPath:               filepath.Join(GetCurrentDir(), "steamcmd"),
+	SteamCmdExe:                filepath.Join(GetCurrentDir(), "steamcmd", "steamcmd.exe"),
+	ServerPath:                 filepath.Join(GetCurrentDir(), "server"),
+	ServerExe:                  filepath.Join(GetCurrentDir(), "server", "PalServer.exe"),
+	ServerDefaultConfigPath:    filepath.Join(GetCurrentDir(), "server", "DefaultPalWorldSettings.ini"),
+	ServerConfigDir:            filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer"),
+	ServerConfigPath:           filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini"),
+	ServerGameUserSettingsPath: filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "GameUserSettings.ini"),
+	ServerProcessName:          "PalServer-Win64-Test-Cmd.exe",
+	SteamCmdUrl:                "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
+	AppId:                      "2394010",
 }
 
 func GetCurrentDir() string {

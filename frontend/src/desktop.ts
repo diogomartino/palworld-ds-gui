@@ -3,7 +3,7 @@ import { EventsOff, EventsOn } from './wailsjs/runtime/runtime';
 import * as DedicatedServer from './wailsjs/go/dedicatedserver/DedicatedServer';
 import * as App from './wailsjs/go/main/App';
 import { parseConfig, serializeConfig } from './helpers/config-parser';
-import { setConfig } from './actions/server';
+import { setConfig, setSaveName } from './actions/server';
 import { TConfig } from './types/server-config';
 
 export const DesktopApi = {
@@ -40,6 +40,17 @@ export const DesktopApi = {
 
       // Read again to update the store
       await DesktopApi.server.readConfig();
+    },
+    readSaveName: async () => {
+      const saveNameString = await DedicatedServer.ReadSaveName();
+
+      setSaveName(saveNameString);
+    },
+    writeSaveName: async (saveName: string) => {
+      await DedicatedServer.WriteSaveName(saveName);
+
+      // Read again to update the store
+      await DesktopApi.server.readSaveName();
     },
     start: async () => {
       await DedicatedServer.Start();

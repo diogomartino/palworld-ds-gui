@@ -26,6 +26,10 @@ export function ReadConfig() {
   return window['go']['dedicatedserver']['DedicatedServer']['ReadConfig']();
 }
 
+export function ReadSaveName() {
+  return window['go']['dedicatedserver']['DedicatedServer']['ReadSaveName']();
+}
+
 export function Restart() {
   return window['go']['dedicatedserver']['DedicatedServer']['Restart']();
 }
@@ -44,4 +48,8 @@ export function Update() {
 
 export function WriteConfig(arg1) {
   return window['go']['dedicatedserver']['DedicatedServer']['WriteConfig'](arg1);
+}
+
+export function WriteSaveName(arg1) {
+  return window['go']['dedicatedserver']['DedicatedServer']['WriteSaveName'](arg1);
 }
