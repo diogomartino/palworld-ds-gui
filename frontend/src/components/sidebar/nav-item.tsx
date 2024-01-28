@@ -1,6 +1,7 @@
 import { createElement, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import cx from 'classnames';
+import useSelectedTheme from '../../hooks/use-selected-theme';
 
 type TNavItemProps = {
   to?: string;
@@ -11,7 +12,10 @@ type TNavItemProps = {
 
 const NavItem = ({ to, label, onClick, iconComponent }: TNavItemProps) => {
   const navigate = useNavigate();
+  const theme = useSelectedTheme();
   const { pathname } = useLocation();
+
+  const activeColor = theme === 'dark' ? '#f8fafc' : '#1e1e1e';
 
   const isActive = useMemo(() => {
     if (to) {
@@ -35,25 +39,24 @@ const NavItem = ({ to, label, onClick, iconComponent }: TNavItemProps) => {
     return iconComponent
       ? createElement(iconComponent as any, {
           size: '1.2rem',
-          color: isActive ? '#f8fafc' : '#a3a3a3'
+          color: isActive ? activeColor : '#a0a0a0'
         })
       : null;
-  }, [iconComponent, isActive]);
+  }, [iconComponent, isActive, activeColor]);
 
   return (
     <div
       className={cx(
-        'flex items-center h-[48px] justify-between p-2 cursor-pointer hover:bg-default-100 select-none hover:transition-all',
-        isActive && 'bg-default-100'
+        'flex items-center h-[48px] justify-between p-2 cursor-pointer hover:bg-content4 select-none hover:transition-all',
+        isActive && 'bg-content3'
       )}
       onClick={onItemClick}
     >
       <div>
         <p
-          className={cx(
-            'text-neutral-400',
-            isActive && 'text-[#f8fafc] font-bold' // hex is used here because tailwind is not as it should with text-neutral (maybe a bug)
-          )}
+          className={
+            isActive ? 'text-foreground font-bold' : 'text-neutral-400'
+          }
         >
           {label}
         </p>
