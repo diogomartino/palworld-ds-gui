@@ -7,9 +7,7 @@ export function Dispose() {
 }
 
 export function DownloadDedicatedServer() {
-  return window['go']['dedicatedserver']['DedicatedServer'][
-    'DownloadDedicatedServer'
-  ]();
+  return window['go']['dedicatedserver']['DedicatedServer']['DownloadDedicatedServer']();
 }
 
 export function Init(arg1) {
@@ -21,9 +19,7 @@ export function IsRunning() {
 }
 
 export function MonitorServerProcess() {
-  return window['go']['dedicatedserver']['DedicatedServer'][
-    'MonitorServerProcess'
-  ]();
+  return window['go']['dedicatedserver']['DedicatedServer']['MonitorServerProcess']();
 }
 
 export function ReadConfig() {
@@ -47,7 +43,5 @@ export function Update() {
 }
 
 export function WriteConfig(arg1) {
-  return window['go']['dedicatedserver']['DedicatedServer']['WriteConfig'](
-    arg1
-  );
+  return window['go']['dedicatedserver']['DedicatedServer']['WriteConfig'](arg1);
 }
