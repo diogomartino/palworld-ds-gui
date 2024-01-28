@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"palword-ds-gui/utils"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/go-ps"
@@ -176,7 +177,20 @@ func (d *DedicatedServer) ReadConfig() string {
 		panic(err)
 	}
 
-	configString := string(configData)
+	configString := strings.TrimSpace(string(configData))
+	isEmpty := len(configString) == 0
+
+	// if the config file is empty, use default config
+	if isEmpty {
+		configData, err := os.ReadFile(utils.Config.ServerDefaultConfigPath)
+
+		if err != nil {
+			panic(err)
+		}
+
+		return strings.TrimSpace(string(configData))
+	}
+
 	return configString
 }
 
