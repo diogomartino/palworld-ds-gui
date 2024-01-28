@@ -18,4 +18,5 @@ body,
 
 p {
   cursor: default;
+  user-select: none;
 }
