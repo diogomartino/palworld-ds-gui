@@ -3,28 +3,17 @@ import { useLocation, useNavigate } from 'react-router';
 import cx from 'classnames';
 
 type TNavItemProps = {
-  forceActive?: boolean;
   to?: string;
   label: string;
   onClick?: () => void;
   iconComponent?: React.ComponentType<any>;
 };
 
-const NavItem = ({
-  forceActive,
-  to,
-  label,
-  onClick,
-  iconComponent
-}: TNavItemProps) => {
+const NavItem = ({ to, label, onClick, iconComponent }: TNavItemProps) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const isActive = useMemo(() => {
-    if (forceActive) {
-      return true;
-    }
-
     if (to) {
       const rootPath = `/${pathname.split('/')[1]}`;
 
@@ -32,7 +21,7 @@ const NavItem = ({
     }
 
     return false;
-  }, [forceActive, to, pathname]);
+  }, [to, pathname]);
 
   const onItemClick = () => {
     onClick?.();
@@ -63,7 +52,7 @@ const NavItem = ({
         <p
           className={cx(
             'text-neutral-400',
-            isActive && 'text-neutral-200 font-bold'
+            isActive && 'text-[#f8fafc] font-bold' // hex is used here because tailwind is not as it should with text-neutral (maybe a bug)
           )}
         >
           {label}
