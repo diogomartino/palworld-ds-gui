@@ -20,8 +20,6 @@ const useEventsInit = () => {
     DesktopApi.onAppEvent(
       AppEvent.SET_LOADING_STATUS,
       (status: LoadingStatus) => {
-        console.log('SET_LOADING_STATUS', status);
-
         setLoadingStatus(status);
 
         if (status === LoadingStatus.DONE) {
@@ -48,15 +46,12 @@ const useEventsInit = () => {
     DesktopApi.onAppEvent(
       AppEvent.SET_SERVER_STATUS,
       (status: ServerStatus) => {
-        console.log('AppEvent.SET_SERVER_STATUS', status);
-
         setStatus(status);
       },
       unsubscribes
     );
 
     return () => {
-      console.log('! unsubscribing from events');
       unsubscribes.forEach((unsubscribe) => unsubscribe());
     };
   }, []);

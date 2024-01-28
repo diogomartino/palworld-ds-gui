@@ -36,9 +36,6 @@ export const DesktopApi = {
     },
     writeConfig: async (config: TConfig) => {
       const serializedConfig = serializeConfig(config);
-
-      console.log('serializedConfig', serializedConfig);
-
       await DedicatedServer.WriteConfig(serializedConfig);
 
       // Read again to update the store

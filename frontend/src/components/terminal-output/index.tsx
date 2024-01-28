@@ -26,12 +26,8 @@ const Entry = ({ entry }: TEntryProps) => {
 const TerminalOutput = ({ entries, className }: TTerminalOutputProps) => {
   const ref = useRef<any>();
 
-  console.log(ref);
-
   useEffect(() => {
     const child = ref.current?.lastChild;
-
-    console.log('! child', child);
 
     setTimeout(() => {
       child?.scrollTo(0, child.scrollHeight);

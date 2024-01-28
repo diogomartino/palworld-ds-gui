@@ -12,8 +12,6 @@ export const consoleSlice = createSlice({
   initialState,
   reducers: {
     addConsoleEntry: (state, action) => {
-      console.log('! addConsoleEntry', action.payload);
-
       if (!state[action.payload.consoleId]) {
         state[action.payload.consoleId] = [];
       }

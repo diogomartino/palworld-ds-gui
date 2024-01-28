@@ -13,8 +13,6 @@ const statusText = {
 const Initializing = () => {
   const status = useLoadingStatus();
 
-  console.log(' useLoadingStatus()', status);
-
   return (
     <div className="flex flex-col justify-center items-center h-full">
       <div className="flex flex-col items-center h-full">
