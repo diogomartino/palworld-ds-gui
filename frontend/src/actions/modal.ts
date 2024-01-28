@@ -23,3 +23,41 @@ export const closeModals = () => {
     );
   }, 500);
 };
+
+export const requestConfirmation = async ({
+  title,
+  message,
+  confirmLabel,
+  cancelLabel,
+  variant = 'info',
+  onConfirm,
+  onCancel
+}: {
+  title?: string;
+  message?: string | React.ReactNode;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  variant?: 'danger' | 'info';
+  onConfirm?: () => void;
+  onCancel?: () => void;
+}): Promise<boolean> => {
+  return new Promise((resolve) => {
+    openModal(Modal.ACTION_CONFIRMATION, {
+      title,
+      message,
+      confirmLabel,
+      cancelLabel,
+      variant,
+      onConfirm: () => {
+        onConfirm?.();
+        closeModals();
+        resolve(true);
+      },
+      onCancel: () => {
+        onCancel?.();
+        closeModals();
+        resolve(false);
+      }
+    });
+  });
+};

@@ -49,6 +49,9 @@ export const DesktopApi = {
     },
     restart: async () => {
       await DedicatedServer.Restart();
+    },
+    update: async () => {
+      await DedicatedServer.Update();
     }
   }
 };

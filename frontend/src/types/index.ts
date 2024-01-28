@@ -7,8 +7,6 @@ export type TGenericObject = {
 export type TGenericFunction = (...args: any[]) => any;
 
 export enum Modal {
-  PROCESS_PICKER = 'PROCESS_PICKER',
-  SETTINGS = 'SETTINGS',
   ACTION_CONFIRMATION = 'ACTION_CONFIRMATION'
 }
 
@@ -25,6 +23,7 @@ export enum ServerStatus {
   STARTING = 'STARTING',
   STOPPING = 'STOPPING',
   RESTARTING = 'RESTARTING',
+  UPDATING = 'UPDATING',
   ERROR = 'ERROR'
 }
 

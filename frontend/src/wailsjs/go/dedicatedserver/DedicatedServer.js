@@ -7,15 +7,23 @@ export function Dispose() {
 }
 
 export function DownloadDedicatedServer() {
-  return window['go']['dedicatedserver']['DedicatedServer']['DownloadDedicatedServer']();
+  return window['go']['dedicatedserver']['DedicatedServer'][
+    'DownloadDedicatedServer'
+  ]();
 }
 
 export function Init(arg1) {
   return window['go']['dedicatedserver']['DedicatedServer']['Init'](arg1);
 }
 
+export function IsRunning() {
+  return window['go']['dedicatedserver']['DedicatedServer']['IsRunning']();
+}
+
 export function MonitorServerProcess() {
-  return window['go']['dedicatedserver']['DedicatedServer']['MonitorServerProcess']();
+  return window['go']['dedicatedserver']['DedicatedServer'][
+    'MonitorServerProcess'
+  ]();
 }
 
 export function ReadConfig() {
@@ -34,6 +42,12 @@ export function Stop() {
   return window['go']['dedicatedserver']['DedicatedServer']['Stop']();
 }
 
+export function Update() {
+  return window['go']['dedicatedserver']['DedicatedServer']['Update']();
+}
+
 export function WriteConfig(arg1) {
-  return window['go']['dedicatedserver']['DedicatedServer']['WriteConfig'](arg1);
+  return window['go']['dedicatedserver']['DedicatedServer']['WriteConfig'](
+    arg1
+  );
 }

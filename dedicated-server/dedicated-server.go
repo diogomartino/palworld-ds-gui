@@ -63,6 +63,12 @@ func (d *DedicatedServer) Init(srcCtx context.Context) {
 func (d *DedicatedServer) DownloadDedicatedServer() {
 	Print("Downloading dedicated server...")
 
+	if d.IsRunning() {
+		Print("Cannot update server while it's running. Stopping it...")
+		d.Stop()
+		return
+	}
+
 	cmd := exec.Command(utils.Config.SteamCmdExe,
 		"+force_install_dir", utils.Config.ServerPath,
 		"+login", "anonymous",
@@ -153,6 +159,13 @@ func (d *DedicatedServer) Start() {
 	go d.MonitorServerProcess()
 }
 
+func (d *DedicatedServer) Update() {
+	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "UPDATING")
+	d.DownloadDedicatedServer()
+	Print("Server updated")
+	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STOPPED")
+}
+
 func (d *DedicatedServer) Stop() {
 	Print("Stopping dedicated server...")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STOPPING")
@@ -176,6 +189,16 @@ func (d *DedicatedServer) Stop() {
 	Print("Server stopped")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STOPPED")
 	d.serverPid = 0
+}
+
+func (d *DedicatedServer) IsRunning() bool {
+	if d.serverPid == 0 {
+		return false
+	}
+
+	proc, _ := utils.FindProcessByPid(d.serverPid)
+
+	return proc != nil
 }
 
 func (d *DedicatedServer) Restart() {

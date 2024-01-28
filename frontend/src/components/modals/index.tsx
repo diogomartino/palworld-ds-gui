@@ -1,7 +1,11 @@
 import { createElement } from 'react';
 import useModalsInfo from '../../hooks/use-modals-info';
+import { Modal } from '../../types';
+import ConfirmActionModal from './confirm-action';
 
-const ModalsMap = {};
+const ModalsMap = {
+  [Modal.ACTION_CONFIRMATION]: ConfirmActionModal
+};
 
 const ModalsProvider = () => {
   const { openModal, modalProps } = useModalsInfo();

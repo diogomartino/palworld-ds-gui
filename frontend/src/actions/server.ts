@@ -23,3 +23,7 @@ export const stopServer = async () => {
 export const restartServer = async () => {
   await DesktopApi.server.restart();
 };
+
+export const updateServer = async () => {
+  await DesktopApi.server.update();
+};
