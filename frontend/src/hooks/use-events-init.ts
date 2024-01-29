@@ -9,7 +9,7 @@ import {
   TGenericFunction,
   TGenericObject
 } from '../types';
-import { setLoadingStatus } from '../actions/app';
+import { initApp, setLoadingStatus } from '../actions/app';
 import { addConsoleEntry } from '../actions/console';
 import { setStatus } from '../actions/server';
 
@@ -23,8 +23,7 @@ const useEventsInit = () => {
         setLoadingStatus(status);
 
         if (status === LoadingStatus.DONE) {
-          DesktopApi.server.readConfig();
-          DesktopApi.server.readSaveName();
+          initApp();
         }
       },
       unsubscribes

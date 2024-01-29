@@ -33,9 +33,6 @@ func Print(message string) {
 
 func (d *DedicatedServer) Init(srcCtx context.Context) {
 	ctx = srcCtx
-
-	Print("Initializing server...")
-
 	proc, _ := utils.FindProcessByName(utils.Config.ServerProcessName)
 
 	if proc != nil {
@@ -82,11 +79,7 @@ func (d *DedicatedServer) DownloadDedicatedServer() {
 	cmd.Stderr = os.Stderr
 	d.cmd = cmd
 
-	err := cmd.Run()
-	if err != nil {
-		Print(err.Error())
-		return
-	}
+	cmd.Run()
 }
 
 func (d *DedicatedServer) MonitorServerProcess() {
@@ -169,6 +162,10 @@ func (d *DedicatedServer) Update() {
 }
 
 func (d *DedicatedServer) Stop() {
+	if !d.IsRunning() {
+		return
+	}
+
 	Print("Stopping dedicated server...")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STOPPING")
 

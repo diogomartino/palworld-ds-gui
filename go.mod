@@ -7,6 +7,7 @@ toolchain go1.21.3
 require (
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/mitchellh/go-ps v1.0.0
+	github.com/robfig/cron v1.2.0
 	github.com/wailsapp/wails/v2 v2.7.1
 )
 

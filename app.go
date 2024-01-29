@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	backupsmanager "palword-ds-gui/backups-manager"
 	dedicatedserver "palword-ds-gui/dedicated-server"
 	"palword-ds-gui/steamcmd"
 
@@ -12,12 +13,14 @@ type App struct {
 	ctx             context.Context
 	steamCmd        *steamcmd.SteamCMD
 	dedicatedServer *dedicatedserver.DedicatedServer
+	backupsManager  *backupsmanager.BackupManager
 }
 
-func NewApp(server *dedicatedserver.DedicatedServer, cmd *steamcmd.SteamCMD) *App {
+func NewApp(server *dedicatedserver.DedicatedServer, cmd *steamcmd.SteamCMD, backupManager *backupsmanager.BackupManager) *App {
 	return &App{
 		steamCmd:        cmd,
 		dedicatedServer: server,
+		backupsManager:  backupManager,
 	}
 }
 
@@ -28,6 +31,7 @@ func (a *App) startup(ctx context.Context) {
 func (a App) domReady(ctx context.Context) {
 	a.steamCmd.Init(ctx)
 	a.dedicatedServer.Init(ctx)
+	a.backupsManager.Init(ctx)
 	runtime.EventsEmit(ctx, "SET_LOADING_STATUS", "DONE")
 }
 

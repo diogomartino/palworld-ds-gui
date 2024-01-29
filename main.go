@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"log"
+	backupsmanager "palword-ds-gui/backups-manager"
 	dedicatedserver "palword-ds-gui/dedicated-server"
 	"palword-ds-gui/steamcmd"
 
@@ -25,7 +26,8 @@ func main() {
 	// Create an instance of the app structure
 	dedicatedServer := dedicatedserver.NewDedicatedServer()
 	steamCmd := steamcmd.NewSteamCMD()
-	app := NewApp(dedicatedServer, steamCmd)
+	backupManager := backupsmanager.NewBackupManager(dedicatedServer)
+	app := NewApp(dedicatedServer, steamCmd, backupManager)
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -56,6 +58,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 			dedicatedServer,
+			backupManager,
 		},
 		// Windows platform specific options
 		Windows: &windows.Options{

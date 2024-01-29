@@ -1,6 +1,7 @@
 import { AppEvent, TGenericFunction } from './types';
 import { EventsOff, EventsOn } from './wailsjs/runtime/runtime';
 import * as DedicatedServer from './wailsjs/go/dedicatedserver/DedicatedServer';
+import * as BackupManager from './wailsjs/go/backupsmanager/BackupManager';
 import * as App from './wailsjs/go/main/App';
 import { parseConfig, serializeConfig } from './helpers/config-parser';
 import { setConfig, setSaveName } from './actions/server';
@@ -63,6 +64,31 @@ export const DesktopApi = {
     },
     update: async () => {
       await DedicatedServer.Update();
+    }
+  },
+  backups: {
+    start: async (interval: number, keepCount: number) => {
+      console.log('! backup start', { interval, keepCount });
+
+      await BackupManager.Start(interval, keepCount);
+    },
+    stop: async () => {
+      await BackupManager.Stop();
+    },
+    getList: async () => {
+      return await BackupManager.GetBackupsList();
+    },
+    delete: async (backupFileName: string) => {
+      await BackupManager.Delete(backupFileName);
+    },
+    create: async () => {
+      await BackupManager.CreateBackup();
+    },
+    open: async (backupFileName: string) => {
+      await BackupManager.Open(backupFileName);
+    },
+    restore: async (backupFileName: string) => {
+      await BackupManager.Restore(backupFileName);
     }
   }
 };

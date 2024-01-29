@@ -10,8 +10,9 @@ You can download the latest version from the [releases page](https://github.com/
 
 ## Screenshots
 
-![Screenshot 1](https://i.imgur.com/hDWhGFq.png)
-![Screenshot 2](https://i.imgur.com/cKq0HO0.png)
+![Screenshot 1](https://i.imgur.com/hWOEky8.png)
+![Screenshot 2](https://i.imgur.com/gu0x0PS.png)
+![Screenshot 3](https://i.imgur.com/3IboT0o.png)
 
 ## Instructions
 
@@ -20,7 +21,10 @@ You can download the latest version from the [releases page](https://github.com/
 3. Configure your server
 4. Hit the "Start" button
 
-The default settings are the official settings. You can change them to your liking.
+The default settings mirror the official configurations, but users have the flexibility to customize them according to their preferences.
+
+[!WARNING]  
+Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
 
 ## Development
 
@@ -43,12 +47,10 @@ The default settings are the official settings. You can change them to your liki
 - [pnpm](https://pnpm.io/)
 
 ```
-wails dev
+wails dev -s
 ```
 
 This will launch the application in development mode. The interface will also run on http://localhost:34115 in case you want to run it in a browser.
-
-You might also want to open `wails.json` and remove the `frontend:build` so typescript does not prevent the app from compiling.
 
 ## Building
 

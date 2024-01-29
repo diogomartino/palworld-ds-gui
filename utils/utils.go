@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"time"
@@ -30,7 +31,9 @@ type AppConfig struct {
 	ServerConfigDir            string
 	ServerConfigPath           string
 	ServerGameUserSettingsPath string
+	ServerSaveDir              string
 	ServerProcessName          string
+	BackupsPath                string
 	AppId                      string
 }
 
@@ -43,7 +46,9 @@ var Config AppConfig = AppConfig{
 	ServerConfigDir:            filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer"),
 	ServerConfigPath:           filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini"),
 	ServerGameUserSettingsPath: filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "GameUserSettings.ini"),
+	ServerSaveDir:              filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "SaveGames", "0"),
 	ServerProcessName:          "PalServer-Win64-Test-Cmd.exe",
+	BackupsPath:                filepath.Join(GetCurrentDir(), "backups"),
 	SteamCmdUrl:                "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
 	AppId:                      "2394010",
 }
@@ -125,6 +130,18 @@ func KillProcessByPid(pid int) error {
 	}
 
 	err = process.Kill()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func OpenExplorerWithFile(folderPath, fileName string) error {
+	cmd := exec.Command("explorer", "/select,", fileName)
+	cmd.Dir = folderPath
+
+	err := cmd.Run()
 	if err != nil {
 		return err
 	}
