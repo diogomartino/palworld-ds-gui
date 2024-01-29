@@ -23,8 +23,8 @@ You can download the latest version from the [releases page](https://github.com/
 
 The default settings mirror the official configurations, but users have the flexibility to customize them according to their preferences.
 
-[!WARNING]  
-Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
+> [!WARNING]  
+> Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
 
 ## Development
 
