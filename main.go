@@ -1,12 +1,17 @@
+//go:build windows
+// +build windows
+
 package main
 
 import (
 	"embed"
-	"log"
+	"os"
 	backupsmanager "palword-ds-gui/backups-manager"
 	dedicatedserver "palword-ds-gui/dedicated-server"
 	"palword-ds-gui/steamcmd"
+	"palword-ds-gui/utils"
 
+	"github.com/tidwall/gjson"
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -17,19 +22,32 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
+//go:embed wails.json
+var wailsJSON string
+
 var (
 	width  = 800
 	height = 560
 )
 
 func main() {
-	// Create an instance of the app structure
+	logsFile, logErr := os.OpenFile(utils.Config.LogsPath, os.O_RDWR|os.O_CREATE, 0666)
+	if logErr != nil {
+		panic(logErr)
+	}
+
+	defer logsFile.Close()
+
+	version := gjson.Get(wailsJSON, "info.productVersion")
+	utils.LogToFile("main.go: main() - Palword Dedicated Server GUI v" + version.String())
+
 	dedicatedServer := dedicatedserver.NewDedicatedServer()
 	steamCmd := steamcmd.NewSteamCMD()
 	backupManager := backupsmanager.NewBackupManager(dedicatedServer)
 	app := NewApp(dedicatedServer, steamCmd, backupManager)
 
-	// Create application with options
+	utils.LogToFile("main.go: main() - Managers created")
+
 	err := wails.Run(&options.App{
 		Title:             "Palword Dedicated Server GUI",
 		Width:             width,
@@ -60,19 +78,18 @@ func main() {
 			dedicatedServer,
 			backupManager,
 		},
-		// Windows platform specific options
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,
 			WindowIsTranslucent:  false,
 			DisableWindowIcon:    false,
-			// DisableFramelessWindowDecorations: false,
-			WebviewUserDataPath: "",
-			ZoomFactor:          1.0,
+			WebviewUserDataPath:  "",
+			ZoomFactor:           1.0,
 		},
 	})
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.LogToFile("main.go: main() - Wails.Run() called")
 
+	if err != nil {
+		panic(err)
+	}
 }

@@ -32,11 +32,13 @@ type TSettings = {
 export interface IAppState {
   loadingStatus: LoadingStatus;
   settings: TSettings;
+  latestVersion: string;
 }
 
 const initialState: IAppState = {
   loadingStatus: LoadingStatus.IDLE,
-  settings: getStoredSettings()
+  settings: getStoredSettings(),
+  latestVersion: APP_VERSION
 };
 
 export const appSlice = createSlice({
@@ -59,6 +61,9 @@ export const appSlice = createSlice({
       };
 
       saveSettings(state.settings);
+    },
+    setLatestVersion: (state, action) => {
+      state.latestVersion = action.payload;
     }
   }
 });

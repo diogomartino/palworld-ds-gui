@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { DesktopApi } from '../desktop';
 import {
   AppEvent,
@@ -9,11 +9,28 @@ import {
   TGenericFunction,
   TGenericObject
 } from '../types';
-import { initApp, setLoadingStatus } from '../actions/app';
+import { checkForUpdates, initApp, setLoadingStatus } from '../actions/app';
 import { addConsoleEntry } from '../actions/console';
 import { setStatus } from '../actions/server';
 
+const CHECK_FOR_UPDATES_INTERVAL = 1000 * 60 * 60 * 24; // 1 day
+
 const useEventsInit = () => {
+  const hasInit = useRef(false);
+
+  useEffect(() => {
+    if (!hasInit.current) {
+      DesktopApi.initApp();
+      checkForUpdates();
+
+      setInterval(() => {
+        checkForUpdates();
+      }, CHECK_FOR_UPDATES_INTERVAL);
+
+      hasInit.current = true;
+    }
+  }, []);
+
   useEffect(() => {
     const unsubscribes: TGenericFunction[] = [];
 

@@ -28,6 +28,9 @@ export const DesktopApi = {
   openUrl: async (url: string) => {
     await App.OpenInBrowser(url);
   },
+  initApp: async () => {
+    await App.InitApp();
+  },
   server: {
     readConfig: async () => {
       const configString = await DedicatedServer.ReadConfig();
@@ -68,8 +71,6 @@ export const DesktopApi = {
   },
   backups: {
     start: async (interval: number, keepCount: number) => {
-      console.log('! backup start', { interval, keepCount });
-
       await BackupManager.Start(interval, keepCount);
     },
     stop: async () => {

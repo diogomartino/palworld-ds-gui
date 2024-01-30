@@ -5,7 +5,7 @@ type TLayoutProps = {
   children?: React.ReactNode;
   className?: string;
   title?: string;
-  subtitle?: string;
+  subtitle?: string | React.ReactNode;
 };
 
 const Layout = ({ children, className, title, subtitle }: TLayoutProps) => {
@@ -16,7 +16,10 @@ const Layout = ({ children, className, title, subtitle }: TLayoutProps) => {
         {(title || subtitle) && (
           <div className="flex flex-col gap-1">
             {title && <p className="text-4xl">{title}</p>}
-            {subtitle && <p className="text-sm text-neutral-500">{subtitle}</p>}
+            {subtitle && typeof subtitle === 'string' && (
+              <p className="text-sm text-neutral-500">{subtitle}</p>
+            )}
+            {subtitle && typeof subtitle !== 'string' && subtitle}
           </div>
         )}
         {children}

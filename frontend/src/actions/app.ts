@@ -43,3 +43,21 @@ export const changeBackupSettings = (
     })
   );
 };
+
+export const checkForUpdates = async () => {
+  try {
+    const response = await fetch(
+      'https://api.github.com/repos/diogomartino/palworld-ds-gui/releases/latest'
+    );
+
+    const data = await response.json();
+    const latestVersion = data.tag_name.replace('v', '');
+
+    if (latestVersion !== APP_VERSION) {
+      store.dispatch(appSliceActions.setLatestVersion(latestVersion));
+    }
+  } catch (error) {
+    store.dispatch(appSliceActions.setLatestVersion(APP_VERSION));
+    console.error(error);
+  }
+};

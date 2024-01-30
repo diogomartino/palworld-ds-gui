@@ -306,4 +306,5 @@ func (d *DedicatedServer) Dispose() {
 	}
 
 	d.Stop()
+	utils.LogToFile("dedicated-server.go: Dispose()")
 }

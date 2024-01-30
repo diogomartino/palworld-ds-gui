@@ -34,6 +34,7 @@ type AppConfig struct {
 	ServerSaveDir              string
 	ServerProcessName          string
 	BackupsPath                string
+	LogsPath                   string
 	AppId                      string
 }
 
@@ -47,6 +48,7 @@ var Config AppConfig = AppConfig{
 	ServerConfigPath:           filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini"),
 	ServerGameUserSettingsPath: filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "GameUserSettings.ini"),
 	ServerSaveDir:              filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "SaveGames", "0"),
+	LogsPath:                   filepath.Join(GetCurrentDir(), "logs.txt"),
 	ServerProcessName:          "PalServer-Win64-Test-Cmd.exe",
 	BackupsPath:                filepath.Join(GetCurrentDir(), "backups"),
 	SteamCmdUrl:                "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
@@ -82,6 +84,19 @@ func DownloadFile(url string, path string) error {
 	return err
 }
 
+func LogToFile(message string) {
+	logsFile, err := os.OpenFile(Config.LogsPath, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+
+	defer logsFile.Close()
+
+	formatedMessage := fmt.Sprintf("[%s] %s", time.Now().Format("02-01-2006 15:04:05"), message)
+
+	logsFile.WriteString(formatedMessage + "\n")
+}
+
 func PrintEx(ctx context.Context, message string, consoleId string) {
 	consoleEntry := ConsoleEntry{
 		Message:   message,
@@ -90,7 +105,7 @@ func PrintEx(ctx context.Context, message string, consoleId string) {
 	}
 
 	runtime.EventsEmit(ctx, "ADD_CONSOLE_ENTRY", consoleId, consoleEntry)
-	println(message)
+	LogToFile(message)
 }
 
 func FindProcessByName(processName string) (ps.Process, error) {

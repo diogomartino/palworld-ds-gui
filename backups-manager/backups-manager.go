@@ -214,4 +214,5 @@ func (b *BackupManager) Restore(backupFileName string) {
 
 func (b *BackupManager) Dispose() {
 	b.Stop()
+	utils.LogToFile("backups-manager.go: Dispose()")
 }

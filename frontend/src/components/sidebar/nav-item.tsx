@@ -2,15 +2,23 @@ import { createElement, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import cx from 'classnames';
 import useSelectedTheme from '../../hooks/use-selected-theme';
+import { TGenericObject } from '../../types';
 
 type TNavItemProps = {
   to?: string;
   label: string;
   onClick?: () => void;
   iconComponent?: React.ComponentType<any>;
+  iconProps?: TGenericObject;
 };
 
-const NavItem = ({ to, label, onClick, iconComponent }: TNavItemProps) => {
+const NavItem = ({
+  to,
+  label,
+  onClick,
+  iconComponent,
+  iconProps
+}: TNavItemProps) => {
   const navigate = useNavigate();
   const theme = useSelectedTheme();
   const { pathname } = useLocation();
@@ -39,10 +47,11 @@ const NavItem = ({ to, label, onClick, iconComponent }: TNavItemProps) => {
     return iconComponent
       ? createElement(iconComponent as any, {
           size: '1.2rem',
-          color: isActive ? activeColor : '#a0a0a0'
+          color: isActive ? activeColor : '#a0a0a0',
+          ...iconProps
         })
       : null;
-  }, [iconComponent, isActive, activeColor]);
+  }, [iconComponent, isActive, activeColor, iconProps]);
 
   return (
     <div
