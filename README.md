@@ -8,6 +8,9 @@ You can download the latest version from the [releases page](https://github.com/
 
 [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) is required. You most likely already have it installed, so you don't need to worry.
 
+> [!WARNING]  
+> Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
+
 ## Screenshots
 
 ![Screenshot 1](https://i.imgur.com/hWOEky8.png)
@@ -22,9 +25,6 @@ You can download the latest version from the [releases page](https://github.com/
 4. Hit the "Start" button
 
 The default settings mirror the official configurations, but users have the flexibility to customize them according to their preferences.
-
-> [!WARNING]  
-> Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
 
 ## Development
 
