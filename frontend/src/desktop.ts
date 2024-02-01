@@ -7,6 +7,8 @@ import * as App from './wailsjs/go/main/App';
 import { parseConfig, serializeConfig } from './helpers/config-parser';
 import { setConfig, setSaveName } from './actions/server';
 import { TConfig } from './types/server-config';
+import { store } from './store';
+import { launchParamsSelector } from './selectors/app';
 
 export const DesktopApi = {
   onAppEvent: (
@@ -61,6 +63,15 @@ export const DesktopApi = {
       await DesktopApi.server.readSaveName();
     },
     start: async () => {
+      const state = store.getState();
+      const params = launchParamsSelector(state);
+      const paramsArray =
+        params
+          ?.split(' ')
+          .filter((p) => p !== '')
+          .map((p) => p.trim()) ?? [];
+
+      await DedicatedServer.SetLaunchParams(paramsArray);
       await DedicatedServer.Start();
     },
     stop: async () => {

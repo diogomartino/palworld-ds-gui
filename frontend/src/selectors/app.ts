@@ -12,3 +12,6 @@ export const latestVersionSelector = (state: IRootState) =>
 
 export const steamImagesCacheSelector = (state: IRootState) =>
   state.app.steamImagesCache;
+
+export const launchParamsSelector = (state: IRootState) =>
+  state.app.settings.launchParams;

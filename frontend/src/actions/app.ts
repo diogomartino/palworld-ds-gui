@@ -12,6 +12,17 @@ export const toggleTheme = () => {
   store.dispatch(appSliceActions.toggleTheme());
 };
 
+export const setLaunchParams = (launchParams: string) => {
+  store.dispatch(appSliceActions.setLaunchParams(launchParams ?? ''));
+};
+
+export const saveSettings = () => {
+  const state = store.getState();
+  const settings = settingsSelector(state);
+
+  localStorage.setItem('settings', JSON.stringify(settings));
+};
+
 export const initApp = () => {
   const state = store.getState();
   const { backup } = settingsSelector(state);

@@ -3,6 +3,7 @@ import { store } from '../store';
 import { TConfig } from '../types/server-config';
 import { ServerStatus } from '../types';
 import { DesktopApi } from '../desktop';
+import { saveSettings } from './app';
 
 export const setConfig = (config: TConfig) => {
   store.dispatch(serverSliceActions.setConfig(config));
@@ -18,6 +19,8 @@ export const setStatus = (status: ServerStatus) => {
 
 export const startServer = async () => {
   await DesktopApi.server.start();
+
+  saveSettings();
 };
 
 export const stopServer = async () => {
