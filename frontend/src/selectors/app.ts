@@ -9,3 +9,6 @@ export const loadingStatusSelector = (state: IRootState) =>
 
 export const latestVersionSelector = (state: IRootState) =>
   state.app.latestVersion;
+
+export const launchParamsSelector = (state: IRootState) =>
+  state.app.settings.launchParams;

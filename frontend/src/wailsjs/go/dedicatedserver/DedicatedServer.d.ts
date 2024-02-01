@@ -18,6 +18,8 @@ export function ReadSaveName():Promise<string>;
 
 export function Restart():Promise<void>;
 
+export function SetLaunchParams(arg1:Array<string>):Promise<void>;
+
 export function Start():Promise<void>;
 
 export function Stop():Promise<void>;

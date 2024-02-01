@@ -15,9 +15,10 @@ import (
 )
 
 type DedicatedServer struct {
-	cmd       *exec.Cmd
-	serverCmd *exec.Cmd
-	serverPid int
+	cmd          *exec.Cmd
+	serverCmd    *exec.Cmd
+	serverPid    int
+	launchParams []string
 }
 
 var ctx context.Context
@@ -105,7 +106,7 @@ func (d *DedicatedServer) Start() {
 	Print("Starting dedicated server...")
 	runtime.EventsEmit(ctx, "SET_SERVER_STATUS", "STARTING")
 
-	d.serverCmd = exec.Command(utils.Config.ServerExe)
+	d.serverCmd = exec.Command(utils.Config.ServerExe, d.launchParams...)
 	d.serverCmd.Dir = utils.Config.ServerPath
 	d.serverCmd.Stdout = os.Stdout
 	d.serverCmd.Stderr = os.Stderr
@@ -255,6 +256,10 @@ func (d *DedicatedServer) WriteConfig(configString string) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (d *DedicatedServer) SetLaunchParams(params []string) {
+	d.launchParams = params
 }
 
 func (d *DedicatedServer) ReadSaveName() string {

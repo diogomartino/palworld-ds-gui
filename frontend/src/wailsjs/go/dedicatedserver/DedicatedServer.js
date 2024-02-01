@@ -34,6 +34,10 @@ export function Restart() {
   return window['go']['dedicatedserver']['DedicatedServer']['Restart']();
 }
 
+export function SetLaunchParams(arg1) {
+  return window['go']['dedicatedserver']['DedicatedServer']['SetLaunchParams'](arg1);
+}
+
 export function Start() {
   return window['go']['dedicatedserver']['DedicatedServer']['Start']();
 }
