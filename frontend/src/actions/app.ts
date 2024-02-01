@@ -2,7 +2,7 @@ import { appSliceActions } from '../store/app-slice';
 import { store } from '../store';
 import { LoadingStatus } from '../types';
 import { DesktopApi } from '../desktop';
-import { settingsSelector } from '../selectors/app';
+import { settingsSelector, steamImagesCacheSelector } from '../selectors/app';
 
 export const setLoadingStatus = (loadingStatus: LoadingStatus) => {
   store.dispatch(appSliceActions.setLoadingStatus(loadingStatus));
@@ -60,4 +60,19 @@ export const checkForUpdates = async () => {
     store.dispatch(appSliceActions.setLatestVersion(APP_VERSION));
     console.error(error);
   }
+};
+
+export const addSteamImage = (steamId: string, imageUrl: string) => {
+  store.dispatch(appSliceActions.addSteamImage({ steamId, imageUrl }));
+};
+
+export const cacheSteamImage = async (steamId: string) => {
+  const state = store.getState();
+  const steamCache = steamImagesCacheSelector(state);
+
+  if (steamCache[steamId]) {
+    return;
+  }
+
+  DesktopApi.getProfileImageURL(steamId);
 };

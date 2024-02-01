@@ -2,6 +2,7 @@ import { AppEvent, TGenericFunction } from './types';
 import { EventsOff, EventsOn } from './wailsjs/runtime/runtime';
 import * as DedicatedServer from './wailsjs/go/dedicatedserver/DedicatedServer';
 import * as BackupManager from './wailsjs/go/backupsmanager/BackupManager';
+import * as RconClient from './wailsjs/go/rconclient/RconClient';
 import * as App from './wailsjs/go/main/App';
 import { parseConfig, serializeConfig } from './helpers/config-parser';
 import { setConfig, setSaveName } from './actions/server';
@@ -30,6 +31,9 @@ export const DesktopApi = {
   },
   initApp: async () => {
     await App.InitApp();
+  },
+  getProfileImageURL: async (steamID64: string) => {
+    await App.GetSteamProfileURL(steamID64);
   },
   server: {
     readConfig: async () => {
@@ -90,6 +94,20 @@ export const DesktopApi = {
     },
     restore: async (backupFileName: string) => {
       await BackupManager.Restore(backupFileName);
+    }
+  },
+  rcon: {
+    execute: async (command: string) => {
+      const result = await RconClient.Execute(
+        '127.0.0.1:25575',
+        'mypw',
+        command
+      );
+
+      return result.trim();
+    },
+    getInfo: async () => {
+      return await DesktopApi.rcon.execute('info');
     }
   }
 };

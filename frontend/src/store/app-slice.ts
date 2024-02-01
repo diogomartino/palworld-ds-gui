@@ -29,16 +29,22 @@ type TSettings = {
   backup: TBackupSettings;
 };
 
+type TSteamImageMap = {
+  [steamId64: string]: string;
+};
+
 export interface IAppState {
   loadingStatus: LoadingStatus;
   settings: TSettings;
   latestVersion: string;
+  steamImagesCache: TSteamImageMap;
 }
 
 const initialState: IAppState = {
   loadingStatus: LoadingStatus.IDLE,
   settings: getStoredSettings(),
-  latestVersion: APP_VERSION
+  latestVersion: APP_VERSION,
+  steamImagesCache: {}
 };
 
 export const appSlice = createSlice({
@@ -64,6 +70,9 @@ export const appSlice = createSlice({
     },
     setLatestVersion: (state, action) => {
       state.latestVersion = action.payload;
+    },
+    addSteamImage: (state, action) => {
+      state.steamImagesCache[action.payload.steamId] = action.payload.imageUrl;
     }
   }
 });
