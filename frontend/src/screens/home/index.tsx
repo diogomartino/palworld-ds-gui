@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import Layout from '../../components/layout';
 import useServerConfig from '../../hooks/use-server-config';
 import {
@@ -20,6 +20,8 @@ import useConsolesById from '../../hooks/use-consoles-by-id';
 import { IconRefresh } from '@tabler/icons-react';
 import { requestConfirmation } from '../../actions/modal';
 import { DesktopApi } from '../../desktop';
+import useLaunchParams from '../../hooks/use-launch-params';
+import { setLaunchParams } from '../../actions/app';
 
 const statusDict = {
   [ServerStatus.STARTED]: 'Server is running',
@@ -34,11 +36,16 @@ const Home = () => {
   const currentConfig = useServerConfig();
   const status = useServerStatus();
   const consoleEntries = useConsolesById([ConsoleId.SERVER]);
+  const launchParams = useLaunchParams();
 
   const startDisabled = status !== ServerStatus.STOPPED;
   const stopDisabled = status !== ServerStatus.STARTED;
   const restartDisabled = status !== ServerStatus.STARTED;
   const updateDisabled = status !== ServerStatus.STOPPED;
+
+  const onLaunchParamsChange = (e) => {
+    setLaunchParams(e.target.value || '');
+  };
 
   return (
     <Layout
@@ -123,6 +130,13 @@ const Home = () => {
           Update Server
         </Button>
       </div>
+
+      <Input
+        size="sm"
+        label="Launch params"
+        value={launchParams}
+        onChange={onLaunchParamsChange}
+      />
 
       <TerminalOutput entries={consoleEntries} className="h-full" />
     </Layout>
