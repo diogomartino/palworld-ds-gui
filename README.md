@@ -13,9 +13,10 @@ You can download the latest version from the [releases page](https://github.com/
 
 ## Screenshots
 
-![Screenshot 1](https://i.imgur.com/hWOEky8.png)
-![Screenshot 2](https://i.imgur.com/gu0x0PS.png)
-![Screenshot 3](https://i.imgur.com/3IboT0o.png)
+![Home](https://i.imgur.com/157panY.png)
+![Settings](https://i.imgur.com/gu0x0PS.png)
+![Admin](https://i.imgur.com/49giAIK.png)
+![Backups](https://i.imgur.com/3IboT0o.png)
 
 ## Instructions
 
