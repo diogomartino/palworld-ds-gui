@@ -16,6 +16,10 @@ export const setLaunchParams = (launchParams: string) => {
   store.dispatch(appSliceActions.setLaunchParams(launchParams ?? ''));
 };
 
+export const setRconCredentials = (host: string, password: string) => {
+  store.dispatch(appSliceActions.setRconCredentials({ host, password }));
+};
+
 export const saveSettings = () => {
   const state = store.getState();
   const settings = settingsSelector(state);
@@ -23,15 +27,15 @@ export const saveSettings = () => {
   localStorage.setItem('settings', JSON.stringify(settings));
 };
 
-export const initApp = () => {
+export const initApp = async () => {
   const state = store.getState();
   const { backup } = settingsSelector(state);
 
-  DesktopApi.server.readConfig();
-  DesktopApi.server.readSaveName();
+  await DesktopApi.server.readConfig();
+  await DesktopApi.server.readSaveName();
 
   if (backup.enabled) {
-    DesktopApi.backups.start(backup.intervalHours, backup.keepCount);
+    await DesktopApi.backups.start(backup.intervalHours, backup.keepCount);
   }
 };
 

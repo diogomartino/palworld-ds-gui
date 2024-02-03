@@ -39,13 +39,21 @@ export interface IAppState {
   settings: TSettings;
   latestVersion: string;
   steamImagesCache: TSteamImageMap;
+  rconCredentials: {
+    host: string;
+    password: string;
+  };
 }
 
 const initialState: IAppState = {
   loadingStatus: LoadingStatus.IDLE,
   settings: getStoredSettings(),
   latestVersion: APP_VERSION,
-  steamImagesCache: {}
+  steamImagesCache: {},
+  rconCredentials: {
+    host: '',
+    password: ''
+  }
 };
 
 export const appSlice = createSlice({
@@ -77,6 +85,9 @@ export const appSlice = createSlice({
     },
     setLaunchParams: (state, action) => {
       state.settings.launchParams = action.payload;
+    },
+    setRconCredentials: (state, action) => {
+      state.rconCredentials = action.payload;
     }
   }
 });

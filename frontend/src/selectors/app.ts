@@ -15,3 +15,6 @@ export const steamImagesCacheSelector = (state: IRootState) =>
 
 export const launchParamsSelector = (state: IRootState) =>
   state.app.settings.launchParams;
+
+export const rconCredentialsSelector = (state: IRootState) =>
+  state.app.rconCredentials;

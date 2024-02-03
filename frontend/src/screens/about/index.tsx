@@ -74,14 +74,14 @@ const About = () => {
       </p>
       <p>
         Licensed under the{' '}
-        <a
-          className="text-blue-500 hover:underline"
-          href="https://opensource.org/licenses/MIT"
-          target="_blank"
-          rel="noreferrer"
+        <span
+          className="text-blue-500 hover:underline cursor-pointer"
+          onClick={() =>
+            DesktopApi.openUrl('https://opensource.org/licenses/MIT')
+          }
         >
           MIT License
-        </a>
+        </span>
         .
       </p>
       <p>
