@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { LoadingStatus } from '../types';
+import { LoadingStatus, TSettings, TSteamImageMap } from '../types';
 import { saveSettings } from '../actions/app';
 
 const getStoredSettings = () => {
@@ -16,22 +16,6 @@ const getStoredSettings = () => {
       stored.launchParams ??
       '-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS'
   } as TSettings;
-};
-
-type TBackupSettings = {
-  enabled: boolean;
-  intervalHours: number;
-  keepCount: number;
-};
-
-type TSettings = {
-  theme: 'light' | 'dark';
-  backup: TBackupSettings;
-  launchParams: string | undefined;
-};
-
-type TSteamImageMap = {
-  [steamId64: string]: string;
 };
 
 export interface IAppState {
@@ -67,7 +51,7 @@ export const appSlice = createSlice({
       state.settings.theme =
         state.settings.theme === 'light' ? 'dark' : 'light';
 
-      saveSettings();
+      saveSettings(state.settings);
     },
     setBackupSettings: (state, action) => {
       state.settings.backup = {
@@ -75,7 +59,7 @@ export const appSlice = createSlice({
         ...action.payload
       };
 
-      saveSettings();
+      saveSettings(state.settings);
     },
     setLatestVersion: (state, action) => {
       state.latestVersion = action.payload;

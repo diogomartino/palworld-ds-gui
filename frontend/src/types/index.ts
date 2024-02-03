@@ -44,3 +44,19 @@ export type TConsoleEntry = {
   message: string;
   msgType: 'stdout' | 'stderr';
 };
+
+export type TBackupSettings = {
+  enabled: boolean;
+  intervalHours: number;
+  keepCount: number;
+};
+
+export type TSettings = {
+  theme: 'light' | 'dark';
+  backup: TBackupSettings;
+  launchParams: string | undefined;
+};
+
+export type TSteamImageMap = {
+  [steamId64: string]: string;
+};

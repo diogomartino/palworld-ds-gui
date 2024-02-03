@@ -1,6 +1,6 @@
 import { appSliceActions } from '../store/app-slice';
 import { store } from '../store';
-import { LoadingStatus } from '../types';
+import { LoadingStatus, TSettings } from '../types';
 import { DesktopApi } from '../desktop';
 import { settingsSelector, steamImagesCacheSelector } from '../selectors/app';
 
@@ -20,11 +20,18 @@ export const setRconCredentials = (host: string, password: string) => {
   store.dispatch(appSliceActions.setRconCredentials({ host, password }));
 };
 
-export const saveSettings = () => {
-  const state = store.getState();
-  const settings = settingsSelector(state);
+export const saveSettings = (settings?: TSettings) => {
+  let targetSettings;
 
-  localStorage.setItem('settings', JSON.stringify(settings));
+  if (settings) {
+    targetSettings = settings;
+  } else {
+    // only get the settings from the store if it's not passed as an argument so we can call this function from the store
+    const state = store.getState();
+    targetSettings = settingsSelector(state);
+  }
+
+  localStorage.setItem('settings', JSON.stringify(targetSettings));
 };
 
 export const initApp = async () => {
