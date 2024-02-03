@@ -10,5 +10,11 @@ export const loadingStatusSelector = (state: IRootState) =>
 export const latestVersionSelector = (state: IRootState) =>
   state.app.latestVersion;
 
+export const steamImagesCacheSelector = (state: IRootState) =>
+  state.app.steamImagesCache;
+
 export const launchParamsSelector = (state: IRootState) =>
   state.app.settings.launchParams;
+
+export const rconCredentialsSelector = (state: IRootState) =>
+  state.app.rconCredentials;

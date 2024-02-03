@@ -8,6 +8,7 @@ import (
 	"os"
 	backupsmanager "palword-ds-gui/backups-manager"
 	dedicatedserver "palword-ds-gui/dedicated-server"
+	rconclient "palword-ds-gui/rcon-client"
 	"palword-ds-gui/steamcmd"
 	"palword-ds-gui/utils"
 
@@ -44,7 +45,8 @@ func main() {
 	dedicatedServer := dedicatedserver.NewDedicatedServer()
 	steamCmd := steamcmd.NewSteamCMD()
 	backupManager := backupsmanager.NewBackupManager(dedicatedServer)
-	app := NewApp(dedicatedServer, steamCmd, backupManager)
+	rconClient := rconclient.NewRconClient()
+	app := NewApp(dedicatedServer, steamCmd, backupManager, rconClient)
 
 	utils.LogToFile("main.go: main() - Managers created")
 
@@ -77,6 +79,7 @@ func main() {
 			app,
 			dedicatedServer,
 			backupManager,
+			rconClient,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,

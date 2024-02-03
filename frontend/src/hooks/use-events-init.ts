@@ -9,7 +9,12 @@ import {
   TGenericFunction,
   TGenericObject
 } from '../types';
-import { checkForUpdates, initApp, setLoadingStatus } from '../actions/app';
+import {
+  addSteamImage,
+  checkForUpdates,
+  initApp,
+  setLoadingStatus
+} from '../actions/app';
 import { addConsoleEntry } from '../actions/console';
 import { setStatus } from '../actions/server';
 
@@ -33,6 +38,16 @@ const useEventsInit = () => {
 
   useEffect(() => {
     const unsubscribes: TGenericFunction[] = [];
+
+    DesktopApi.onAppEvent(
+      AppEvent.RETURN_STEAM_IMAGE,
+      (resultString: string) => {
+        const [steamId, imageUrl] = resultString.split('|');
+
+        addSteamImage(steamId, imageUrl);
+      },
+      unsubscribes
+    );
 
     DesktopApi.onAppEvent(
       AppEvent.SET_LOADING_STATUS,

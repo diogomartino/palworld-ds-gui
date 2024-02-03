@@ -1,8 +1,8 @@
 import { appSliceActions } from '../store/app-slice';
 import { store } from '../store';
-import { LoadingStatus } from '../types';
+import { LoadingStatus, TSettings } from '../types';
 import { DesktopApi } from '../desktop';
-import { settingsSelector } from '../selectors/app';
+import { settingsSelector, steamImagesCacheSelector } from '../selectors/app';
 
 export const setLoadingStatus = (loadingStatus: LoadingStatus) => {
   store.dispatch(appSliceActions.setLoadingStatus(loadingStatus));
@@ -16,22 +16,33 @@ export const setLaunchParams = (launchParams: string) => {
   store.dispatch(appSliceActions.setLaunchParams(launchParams ?? ''));
 };
 
-export const saveSettings = () => {
-  const state = store.getState();
-  const settings = settingsSelector(state);
-
-  localStorage.setItem('settings', JSON.stringify(settings));
+export const setRconCredentials = (host: string, password: string) => {
+  store.dispatch(appSliceActions.setRconCredentials({ host, password }));
 };
 
-export const initApp = () => {
+export const saveSettings = (settings?: TSettings) => {
+  let targetSettings;
+
+  if (settings) {
+    targetSettings = settings;
+  } else {
+    // only get the settings from the store if it's not passed as an argument so we can call this function from the store
+    const state = store.getState();
+    targetSettings = settingsSelector(state);
+  }
+
+  localStorage.setItem('settings', JSON.stringify(targetSettings));
+};
+
+export const initApp = async () => {
   const state = store.getState();
   const { backup } = settingsSelector(state);
 
-  DesktopApi.server.readConfig();
-  DesktopApi.server.readSaveName();
+  await DesktopApi.server.readConfig();
+  await DesktopApi.server.readSaveName();
 
   if (backup.enabled) {
-    DesktopApi.backups.start(backup.intervalHours, backup.keepCount);
+    await DesktopApi.backups.start(backup.intervalHours, backup.keepCount);
   }
 };
 
@@ -71,4 +82,19 @@ export const checkForUpdates = async () => {
     store.dispatch(appSliceActions.setLatestVersion(APP_VERSION));
     console.error(error);
   }
+};
+
+export const addSteamImage = (steamId: string, imageUrl: string) => {
+  store.dispatch(appSliceActions.addSteamImage({ steamId, imageUrl }));
+};
+
+export const cacheSteamImage = async (steamId: string) => {
+  const state = store.getState();
+  const steamCache = steamImagesCacheSelector(state);
+
+  if (steamCache[steamId]) {
+    return;
+  }
+
+  DesktopApi.getProfileImageURL(steamId);
 };

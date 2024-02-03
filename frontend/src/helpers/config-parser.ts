@@ -88,7 +88,7 @@ OptionSettings=({__SETTINGS__})`;
       if (configTypes[key] === 'string') {
         settings.push(`${key}="${sanitizedValue}"`);
       } else if (configTypes[key] === 'boolean') {
-        settings.push(`${key}=${sanitizedValue ? 'True' : 'False'}`);
+        settings.push(`${key}=${value ? 'True' : 'False'}`);
       } else {
         settings.push(`${key}=${sanitizedValue}`);
       }

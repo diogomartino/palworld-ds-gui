@@ -35,11 +35,28 @@ export enum ConsoleId {
 export enum AppEvent {
   SET_LOADING_STATUS = 'SET_LOADING_STATUS',
   SET_SERVER_STATUS = 'SET_SERVER_STATUS',
-  ADD_CONSOLE_ENTRY = 'ADD_CONSOLE_ENTRY'
+  ADD_CONSOLE_ENTRY = 'ADD_CONSOLE_ENTRY',
+  RETURN_STEAM_IMAGE = 'RETURN_STEAM_IMAGE'
 }
 
 export type TConsoleEntry = {
   timestamp: number;
   message: string;
   msgType: 'stdout' | 'stderr';
+};
+
+export type TBackupSettings = {
+  enabled: boolean;
+  intervalHours: number;
+  keepCount: number;
+};
+
+export type TSettings = {
+  theme: 'light' | 'dark';
+  backup: TBackupSettings;
+  launchParams: string | undefined;
+};
+
+export type TSteamImageMap = {
+  [steamId64: string]: string;
 };
