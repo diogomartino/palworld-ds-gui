@@ -186,8 +186,8 @@ const Admin = () => {
   };
 
   const onConnectClick = async () => {
-    setIsOnline(false);
     setRconCredentials(host, password);
+    await loadInfo();
   };
 
   useEffect(() => {
