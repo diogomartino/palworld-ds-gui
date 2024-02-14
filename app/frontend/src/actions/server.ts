@@ -37,3 +37,7 @@ export const clearServerState = () => {
 export const setBackupsList = (backupsList: any) => {
   store.dispatch(serverSliceActions.setBackupsList(backupsList));
 };
+
+export const setServerVersion = (version: string) => {
+  store.dispatch(serverSliceActions.setVersion(version));
+};

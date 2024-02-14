@@ -14,6 +14,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/mitchellh/go-ps"
+	"github.com/tidwall/gjson"
 	"gopkg.in/ini.v1"
 )
 
@@ -33,6 +34,7 @@ type AppConfig struct {
 	LogsPath                   string
 	PersistedSettingsPath      string
 	AppId                      string
+	ServerVersion              string
 }
 
 var Config AppConfig = AppConfig{
@@ -51,6 +53,7 @@ var Config AppConfig = AppConfig{
 	PersistedSettingsPath:      filepath.Join(GetCurrentDir(), "gui-server-settings.ini"),
 	SteamCmdUrl:                "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
 	AppId:                      "2394010",
+	ServerVersion:              "0.0.7",
 }
 
 type PersistedSettingsBackup struct {
@@ -97,7 +100,9 @@ var Launch LaunchParams = LaunchParams{
 
 var EmitConsoleLog func(message string, excludeClient *websocket.Conn)
 
-func Init() {
+func Init(serverJSON string) {
+	Config.ServerVersion = gjson.Get(serverJSON, "productVersion").String()
+
 	logsFile, logErr := os.OpenFile(Config.LogsPath, os.O_RDWR|os.O_CREATE, 0666)
 	if logErr != nil {
 		panic(logErr)
@@ -115,14 +120,14 @@ func Init() {
 		panic(err)
 	}
 
-	SaveSettings()
-
 	flag.BoolVar(&Launch.ForceNewKey, "newkey", false, "Generate a new API key")
 	flag.BoolVar(&Launch.ShowKey, "showkey", false, "Show the current API key")
 	flag.BoolVar(&Launch.Help, "help", false, "Show help")
 	flag.IntVar(&Launch.Port, "port", 21577, "Port to run the server on")
 
 	flag.Parse()
+
+	LogToFile("utils.go: Init() - Palword Dedicated Server GUI v"+Config.ServerVersion, false)
 }
 
 func LoadSettings() error {

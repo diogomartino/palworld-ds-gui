@@ -22,6 +22,7 @@ type ClientInitResData struct {
 	CurrentSaveName        string                        `json:"currentSaveName"`
 	CurrentBackupsSettings utils.PersistedSettingsBackup `json:"currentBackupsSettings"`
 	CurrentBackupsList     []Backup                      `json:"currentBackupsList"`
+	ServerVersion          string                        `json:"serverVersion"`
 }
 
 type ClientInitRes struct {
@@ -71,6 +72,7 @@ func ClientInitHandler(conn *websocket.Conn, data []byte) {
 			CurrentSaveName:        ReadSaveName(),
 			CurrentBackupsSettings: utils.Settings.Backup,
 			CurrentBackupsList:     backupsList,
+			ServerVersion:          utils.Config.ServerVersion,
 		},
 	})
 }

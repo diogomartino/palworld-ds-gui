@@ -8,6 +8,7 @@ export interface IServerState {
   status: ServerStatus;
   backupsList: TBackup[];
   backupSettings: TBackupSettings;
+  version: string | undefined;
 }
 
 const initialState: IServerState = {
@@ -19,7 +20,8 @@ const initialState: IServerState = {
     enabled: false,
     intervalHours: 1,
     keepCount: 24
-  }
+  },
+  version: undefined
 };
 
 export const serverSlice = createSlice({
@@ -45,6 +47,9 @@ export const serverSlice = createSlice({
     },
     setBackupSettings: (state, action) => {
       state.backupSettings = action.payload;
+    },
+    setVersion: (state, action) => {
+      state.version = action.payload;
     }
   }
 });

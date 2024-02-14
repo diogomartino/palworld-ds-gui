@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "embed"
 	"flag"
 	"os"
 	"palworld-ds-gui-server/utils"
@@ -13,8 +14,11 @@ var (
 	api           *Api
 )
 
+//go:embed server.json
+var serverJSON string
+
 func main() {
-	utils.Init()
+	utils.Init(serverJSON)
 
 	if utils.Launch.Help {
 		flag.PrintDefaults()

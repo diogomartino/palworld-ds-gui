@@ -2,6 +2,7 @@ import { socketSliceActions } from '../store/socket-slice';
 import { serverSliceActions } from '../store/server-slice';
 import { store } from '../store';
 import {
+  Modal,
   ServerStatus,
   TBackup,
   TBackupSettings,
@@ -9,9 +10,15 @@ import {
   TConsoleEntry
 } from '../types';
 import { setLaunchParams } from './app';
-import { setBackupsList, setConfig, setSaveName } from './server';
+import {
+  setBackupsList,
+  setConfig,
+  setSaveName,
+  setServerVersion
+} from './server';
 import { parseConfig } from '../helpers/config-parser';
 import { addConsoleEntry } from './console';
+import { openModal } from './modal';
 
 export const setSocket = (socket: WebSocket) => {
   store.dispatch(socketSliceActions.setSocket(socket));
@@ -56,8 +63,6 @@ export const onAddConsoleEntry = (message: string) => {
 };
 
 export const onClientInited = (data: TClientInitedData) => {
-  console.log('! onClientInited', data);
-
   onServerStatusChanged(data.currentServerStatus);
   onLaunchParamsChanged(data.currentLaunchParams);
   onServerConfigChanged(data.currentConfig);
@@ -65,8 +70,16 @@ export const onClientInited = (data: TClientInitedData) => {
   onBackupSettingsUpdated(data.currentBackupsSettings);
   onBackupListUpdated(data.currentBackupsList);
 
+  setServerVersion(data.serverVersion);
   setSocketInited(true);
   setSocketConnecting(false);
+
+  if (data.serverVersion !== APP_VERSION) {
+    openModal(Modal.ACTION_CONFIRMATION, {
+      clientVersion: APP_VERSION,
+      serverVersion: data.serverVersion
+    });
+  }
 };
 
 export const onBackupListUpdated = (data) => {

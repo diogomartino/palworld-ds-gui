@@ -7,7 +7,8 @@ export type TGenericObject = {
 export type TGenericFunction = (...args: any[]) => any;
 
 export enum Modal {
-  ACTION_CONFIRMATION = 'ACTION_CONFIRMATION'
+  ACTION_CONFIRMATION = 'ACTION_CONFIRMATION',
+  VERSION_MISMATCH = 'VERSION_MISMATCH'
 }
 
 export enum ServerStatus {
@@ -81,6 +82,7 @@ export type TClientInitedData = {
   currentSaveName: string;
   currentBackupsSettings: TBackupSettings;
   currentBackupsList: TBackup[];
+  serverVersion: string;
 };
 
 export type TSettings = {

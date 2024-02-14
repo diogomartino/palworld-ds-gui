@@ -16,7 +16,8 @@ body,
   height: 100%;
 }
 
-p {
+p,
+span {
   cursor: default;
   user-select: none;
 }
