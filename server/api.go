@@ -36,7 +36,7 @@ func (a *Api) Init() {
 	internalIp := utils.GetOutboundIP()
 	externalIp, err := utils.GetExternalIPv4()
 	if err != nil {
-		fmt.Println("Failed to get external IP:", err)
+		utils.LogToFile("Failed to get external IP: "+err.Error(), true)
 		fmt.Printf("Server is running on %s:%d\n", internalIp, utils.Launch.Port)
 	} else {
 		fmt.Printf("Server is running on %s:%d (Local IP: %s:%d)\n", externalIp, utils.Launch.Port, internalIp, utils.Launch.Port)

@@ -8,9 +8,6 @@ const getStoredSettings = () => {
 
   return {
     theme: stored.theme ?? 'dark',
-    launchParams:
-      stored.launchParams ??
-      '-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS',
     serverCredentials: {
       host: stored.serverCredentials?.host ?? '127.0.0.1:21577',
       apiKey: stored.serverCredentials?.apiKey ?? ''
@@ -27,6 +24,7 @@ export interface IAppState {
     password: string;
   };
   socket: WebSocket | undefined;
+  launchParams: string;
 }
 
 const initialState: IAppState = {
@@ -37,7 +35,8 @@ const initialState: IAppState = {
   rconCredentials: {
     host: '',
     password: ''
-  }
+  },
+  launchParams: ''
 };
 
 export const appSlice = createSlice({
@@ -62,7 +61,7 @@ export const appSlice = createSlice({
       state.steamImagesCache[action.payload.steamId] = action.payload.imageUrl;
     },
     setLaunchParams: (state, action) => {
-      state.settings.launchParams = action.payload;
+      state.launchParams = action.payload;
     },
     setRconCredentials: (state, action) => {
       state.rconCredentials = action.payload;

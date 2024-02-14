@@ -4,6 +4,7 @@ import {
   onAddConsoleEntry,
   onBackupListUpdated,
   onBackupSettingsUpdated,
+  onLaunchParamsChanged,
   onServerConfigChanged,
   onServerSaveNameChanged,
   onServerStatusChanged,
@@ -90,6 +91,9 @@ const SocketProvider = ({ children }: TSocketProviderProps) => {
             break;
           case SocketEvent.BACKUP_SETTINGS_CHANGED:
             onBackupSettingsUpdated(message.data);
+            break;
+          case SocketEvent.LAUNCH_PARAMS_CHANGED:
+            onLaunchParamsChanged(message.data);
             break;
           default:
             break;

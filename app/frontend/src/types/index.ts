@@ -42,7 +42,8 @@ export enum SocketAction {
   OPEN_BACKUP = 'OPEN_BACKUP',
   RESTORE_BACKUP = 'RESTORE_BACKUP',
   DOWNLOAD_BACKUP = 'DOWNLOAD_BACKUP',
-  GET_BACKUPS_SETTINGS = 'GET_BACKUPS_SETTINGS'
+  GET_BACKUPS_SETTINGS = 'GET_BACKUPS_SETTINGS',
+  SAVE_LAUNCH_PARAMS = 'SAVE_LAUNCH_PARAMS'
 }
 
 export enum SocketEvent {
@@ -51,6 +52,7 @@ export enum SocketEvent {
   SERVER_SAVE_NAME_CHANGED = 'SERVER_SAVE_NAME_CHANGED',
   BACKUP_LIST_CHANGED = 'BACKUP_LIST_CHANGED',
   BACKUP_SETTINGS_CHANGED = 'BACKUP_SETTINGS_CHANGED',
+  LAUNCH_PARAMS_CHANGED = 'LAUNCH_PARAMS_CHANGED',
   CUSTOM_ERROR = 'CUSTOM_ERROR',
   ADD_CONSOLE_ENTRY = 'ADD_CONSOLE_ENTRY'
 }
@@ -72,10 +74,14 @@ export type TServerCredentials = {
   apiKey: string;
 };
 
+export type TClientInitedData = {
+  currentServerStatus: ServerStatus;
+  currentLaunchParams: string;
+};
+
 export type TSettings = {
   theme: 'light' | 'dark';
   serverCredentials: TServerCredentials;
-  launchParams: string | undefined;
 };
 
 export type TSteamImageMap = {

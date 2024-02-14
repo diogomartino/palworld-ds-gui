@@ -59,24 +59,22 @@ type PersistedSettingsBackup struct {
 	KeepCount int     `ini:"keepCount"`
 }
 
+type PersistedSettingsGeneral struct {
+	APIKey       string `ini:"apiKey"`
+	LaunchParams string `ini:"launchParams"`
+}
+
 type PersistedSettings struct {
-	General struct {
-		APIKey string `ini:"apiKey"`
-	}
-	Backup PersistedSettingsBackup
+	General PersistedSettingsGeneral
+	Backup  PersistedSettingsBackup
 }
 
 var Settings PersistedSettings = PersistedSettings{
-	General: struct {
-		APIKey string `ini:"apiKey"`
-	}{
-		APIKey: "CHANGE_ME",
+	General: PersistedSettingsGeneral{
+		APIKey:       "CHANGE_ME",
+		LaunchParams: "-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS",
 	},
-	Backup: struct {
-		Enabled   bool    `ini:"enabled"`
-		Interval  float32 `ini:"interval"`
-		KeepCount int     `ini:"keepCount"`
-	}{
+	Backup: PersistedSettingsBackup{
 		Enabled:   false,
 		Interval:  1,
 		KeepCount: 24,

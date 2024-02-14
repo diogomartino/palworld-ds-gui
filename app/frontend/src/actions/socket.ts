@@ -5,12 +5,13 @@ import {
   ServerStatus,
   TBackup,
   TBackupSettings,
+  TClientInitedData,
   TConsoleEntry
 } from '../types';
-import { consolesSliceActions } from '../store/console-slice';
-import { initApp } from './app';
-import { setStatus } from './server';
+import { fetchServerInfo, setLaunchParams } from './app';
+import { setBackupsList, setConfig, setSaveName, setStatus } from './server';
 import { parseConfig } from '../helpers/config-parser';
+import { addConsoleEntry } from './console';
 
 export const setSocket = (socket: WebSocket) => {
   store.dispatch(socketSliceActions.setSocket(socket));
@@ -51,14 +52,15 @@ export const onAddConsoleEntry = (message: string) => {
     timestamp: Date.now()
   };
 
-  store.dispatch(consolesSliceActions.addConsoleEntry(entry));
+  addConsoleEntry(entry);
 };
 
-export const onClientInited = (data) => {
-  setStatus(data);
+export const onClientInited = (data: TClientInitedData) => {
+  setStatus(data.currentServerStatus);
+  setLaunchParams(data.currentLaunchParams);
   setSocketInited(true);
   setSocketConnecting(false);
-  initApp();
+  fetchServerInfo();
 };
 
 export const onBackupListUpdated = (data) => {
@@ -69,7 +71,7 @@ export const onBackupListUpdated = (data) => {
     timestamp: backup.Timestamp
   }));
 
-  store.dispatch(serverSliceActions.setBackupsList(backups));
+  setBackupsList(backups);
 };
 
 export const onBackupSettingsUpdated = (data) => {
@@ -82,12 +84,16 @@ export const onBackupSettingsUpdated = (data) => {
   store.dispatch(serverSliceActions.setBackupSettings(backupsSettings));
 };
 
+export const onLaunchParamsChanged = (launchParams: string) => {
+  setLaunchParams(launchParams);
+};
+
 export const onServerConfigChanged = (configStr: string) => {
   const config = parseConfig(configStr);
 
-  store.dispatch(serverSliceActions.setConfig(config));
+  setConfig(config);
 };
 
 export const onServerSaveNameChanged = (saveName: string) => {
-  store.dispatch(serverSliceActions.setSaveName(saveName));
+  setSaveName(saveName);
 };

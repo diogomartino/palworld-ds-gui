@@ -114,6 +114,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			RestoreBackupHandler(conn, p)
 		case getBackupsConfigEvent:
 			GetBackupsConfigHandler(conn, p)
+		case saveLaunchParamsEvent:
+			SaveLaunchParamsHandler(conn, p)
 		default:
 			utils.LogToFile(fmt.Sprintf("Unknown event: %s", message.Event), true)
 		}
@@ -160,8 +162,6 @@ func EmitBackupSettings(exclude *websocket.Conn) {
 		Data    utils.PersistedSettingsBackup `json:"data"`
 	}
 
-	println("EmitBackupSettings")
-
 	BroadcastJSON(BackupSettingsResponse{
 		Event:   "BACKUP_SETTINGS_CHANGED",
 		Success: true,
@@ -173,6 +173,14 @@ func EmitSaveName(name string, exclude *websocket.Conn) {
 	BroadcastJSON(BaseResponse{
 		Event:   "SERVER_SAVE_NAME_CHANGED",
 		Data:    name,
+		Success: true,
+	}, exclude)
+}
+
+func EmitLaunchParams(exclude *websocket.Conn) {
+	BroadcastJSON(BaseResponse{
+		Event:   "SERVER_SAVE_NAME_CHANGED",
+		Data:    utils.Settings.General.LaunchParams,
 		Success: true,
 	}, exclude)
 }

@@ -10,9 +10,6 @@ import (
 type StartServerRequest struct {
 	Event   string `json:"event"`
 	EventId string `json:"eventId"`
-	Data    struct {
-		LaunchParams []string `json:"launchParams"`
-	}
 }
 
 type StartServerRes struct {

@@ -1,8 +1,9 @@
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Tooltip } from '@nextui-org/react';
 import Layout from '../../components/layout';
 import useServerConfig from '../../hooks/use-server-config';
 import {
   IconCloudDownload,
+  IconDeviceFloppy,
   IconPlayerPlay,
   IconPlayerStop
 } from '@tabler/icons-react';
@@ -17,6 +18,7 @@ import { DesktopAPI } from '../../desktop';
 import useLaunchParams from '../../hooks/use-launch-params';
 import { setLaunchParams } from '../../actions/app';
 import { ServerAPI } from '../../server';
+import { useState } from 'react';
 
 const statusDict = {
   [ServerStatus.STARTED]: 'Server is running',
@@ -32,6 +34,7 @@ const Home = () => {
   const status = useServerStatus();
   const consoleEntries = useConsolesById();
   const launchParams = useLaunchParams();
+  const [saving, setSaving] = useState(false);
 
   const startDisabled = status !== ServerStatus.STOPPED;
   const stopDisabled = status !== ServerStatus.STARTED;
@@ -40,6 +43,12 @@ const Home = () => {
 
   const onLaunchParamsChange = (e) => {
     setLaunchParams(e.target.value || '');
+  };
+
+  const onSaveLaunchParamsClick = async () => {
+    setSaving(true);
+    await ServerAPI.saveLaunchParams(launchParams || '');
+    setSaving(false);
   };
 
   return (
@@ -126,12 +135,24 @@ const Home = () => {
         </Button>
       </div>
 
-      <Input
-        size="sm"
-        label="Launch params"
-        value={launchParams}
-        onChange={onLaunchParamsChange}
-      />
+      <div className="flex gap-2 items-center">
+        <Input
+          size="sm"
+          label="Launch params"
+          value={launchParams}
+          onChange={onLaunchParamsChange}
+        />
+        <Tooltip content="Save launch params">
+          <Button
+            isIconOnly
+            color="primary"
+            onClick={onSaveLaunchParamsClick}
+            isLoading={saving}
+          >
+            <IconDeviceFloppy />
+          </Button>
+        </Tooltip>
+      </div>
 
       <TerminalOutput entries={consoleEntries} className="h-full" />
     </Layout>

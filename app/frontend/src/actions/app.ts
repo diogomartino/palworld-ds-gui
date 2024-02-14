@@ -37,7 +37,8 @@ export const saveSettings = (settings?: TSettings) => {
   localStorage.setItem('settings', JSON.stringify(targetSettings));
 };
 
-export const initApp = async () => {
+export const fetchServerInfo = async () => {
+  // TODO:: all this data should be returned when SocketAction.INIT is calle
   await ServerAPI.fetchConfig();
   await ServerAPI.fetchSaveName();
   await ServerAPI.backups.fetchCurrentSettings();

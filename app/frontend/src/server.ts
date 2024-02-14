@@ -3,12 +3,7 @@ import { parseConfig, serializeConfig } from './helpers/config-parser';
 import { setConfig, setSaveName } from './actions/server';
 import { ConfigKey, TConfig } from './types/server-config';
 import { store } from './store';
-import {
-  notifyError,
-  notifySuccess,
-  saveSettings,
-  setRconCredentials
-} from './actions/app';
+import { notifyError, notifySuccess, setRconCredentials } from './actions/app';
 import { socketStateSelector } from './selectors/socket';
 import {
   onBackupListUpdated,
@@ -16,6 +11,8 @@ import {
   onClientInited
 } from './actions/socket';
 import { DesktopAPI } from './desktop';
+
+const TIMEOUT_MS = 10000;
 
 export const ServerAPI = {
   send: async (
@@ -26,8 +23,7 @@ export const ServerAPI = {
     return new Promise((resolve, reject) => {
       const state = store.getState();
       const { socket } = socketStateSelector(state);
-
-      // TODO: add timeout
+      let timeoutId: number | undefined = undefined;
 
       try {
         const eventId = Math.random().toString(36).substring(2);
@@ -43,6 +39,7 @@ export const ServerAPI = {
           const response = JSON.parse(event.data);
 
           if (response.eventId === eventId) {
+            clearTimeout(timeoutId);
             socket.removeEventListener('message', onMessage);
 
             delete response.eventId;
@@ -59,8 +56,14 @@ export const ServerAPI = {
           }
         };
 
+        timeoutId = setTimeout(() => {
+          socket.removeEventListener('message', onMessage);
+          reject(new Error('Request timed out'));
+        }, TIMEOUT_MS);
+
         socket.addEventListener('message', onMessage);
       } catch (error) {
+        clearTimeout(timeoutId);
         DesktopAPI.logToFile('Unknown error while handling socket event');
         reject(error ?? 'Unknown error');
       }
@@ -79,13 +82,16 @@ export const ServerAPI = {
     );
   },
   writeConfig: async (config: TConfig) => {
-    const serializedConfig = serializeConfig(config);
-    await ServerAPI.send(SocketAction.WRITE_CONFIG, {
-      config: serializedConfig
-    });
+    try {
+      const serializedConfig = serializeConfig(config);
+      await ServerAPI.send(SocketAction.WRITE_CONFIG, {
+        config: serializedConfig
+      });
 
-    // // Read again to confirm and update the store
-    // await ServerAPI.fetchConfig();
+      notifySuccess('Config saved');
+    } catch {
+      notifyError('Could not save config');
+    }
   },
   fetchSaveName: async () => {
     const { data: saveNameString } = await ServerAPI.send(
@@ -95,14 +101,15 @@ export const ServerAPI = {
     setSaveName(saveNameString);
   },
   writeSaveName: async (saveName: string) => {
-    await ServerAPI.send(SocketAction.WRITE_SAVE_NAME, { saveName });
-
-    // Read again to confirm and update the store
-    await ServerAPI.fetchSaveName();
+    try {
+      await ServerAPI.send(SocketAction.WRITE_SAVE_NAME, { saveName });
+      notifySuccess('Save name saved');
+    } catch {
+      notifyError('Could not save save name');
+    }
   },
   start: async () => {
     ServerAPI.send(SocketAction.START_SERVER);
-    saveSettings();
   },
   stop: () => {
     ServerAPI.send(SocketAction.STOP_SERVER);
@@ -117,6 +124,14 @@ export const ServerAPI = {
     const { data } = await ServerAPI.send(SocketAction.INIT);
 
     onClientInited(data);
+  },
+  saveLaunchParams: async (launchParams: string) => {
+    try {
+      await ServerAPI.send(SocketAction.SAVE_LAUNCH_PARAMS, { launchParams });
+      notifySuccess('Launch params saved');
+    } catch {
+      notifyError('Could not save launch params');
+    }
   },
   backups: {
     start: async (interval: number, keepCount: number) => {

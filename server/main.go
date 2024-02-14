@@ -14,7 +14,6 @@ var (
 )
 
 func main() {
-	println(utils.GetCurrentDir())
 	utils.Init()
 
 	if utils.Launch.Help {
