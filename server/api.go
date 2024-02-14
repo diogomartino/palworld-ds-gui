@@ -6,7 +6,9 @@ import (
 	"encoding/hex"
 	"fmt"
 	"net/http"
+	"os"
 	"palworld-ds-gui-server/utils"
+	"path"
 )
 
 type Api struct {
@@ -45,6 +47,32 @@ func (a *Api) Init() {
 	utils.EmitConsoleLog = LogToClient
 
 	http.HandleFunc("/ws", handleWebSocket)
+	http.HandleFunc("/backups/", func(w http.ResponseWriter, r *http.Request) {
+		apiKey := r.Header.Get("Authorization")
+
+		fmt.Printf("API Key: %s\n", apiKey)
+
+		if apiKey != utils.Settings.General.APIKey {
+			utils.Log(fmt.Sprintf("Unauthorized backup download from %s", r.RemoteAddr))
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		// Extract the specific file path from the URL.
+		filePath := r.URL.Path[len("/backups/"):]
+
+		// Safely join the base path with the requested file path to avoid directory traversal attacks.
+		safeFilePath := path.Join(utils.Config.BackupsPath, filePath)
+
+		// Ensure the file exists and is not a directory before serving.
+		if info, err := os.Stat(safeFilePath); err != nil || info.IsDir() {
+			http.NotFound(w, r)
+			return
+		}
+
+		// Serve the requested file.
+		http.ServeFile(w, r, safeFilePath)
+	})
 	http.ListenAndServe(fmt.Sprintf(":%d", utils.Launch.Port), nil)
 }
 

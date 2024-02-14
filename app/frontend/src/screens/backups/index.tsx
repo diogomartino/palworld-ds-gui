@@ -27,10 +27,12 @@ import {
 } from '@tabler/icons-react';
 import { requestConfirmation } from '../../actions/modal';
 import { TGenericObject } from '../../types';
-import { changeBackupSettings } from '../../actions/app';
+import { changeBackupSettings, notifySuccess } from '../../actions/app';
 import { ServerAPI } from '../../server';
 import useBackupsList from '../../hooks/use-backups-list';
 import useBackupSettings from '../../hooks/use-backup-settings';
+import useServerCredentials from '../../hooks/use-server-credentials';
+import { DesktopAPI } from '../../desktop';
 
 const columns = [
   {
@@ -58,6 +60,8 @@ type TBackupActionsProps = {
 };
 
 const BackupActions = ({ backup }: TBackupActionsProps) => {
+  const serverCredentials = useServerCredentials();
+
   const onRestoreClick = async () => {
     await requestConfirmation({
       title: 'Confirmation',
@@ -83,6 +87,16 @@ const BackupActions = ({ backup }: TBackupActionsProps) => {
     });
   };
 
+  const onDownloadClick = () => {
+    DesktopAPI.downloadFile(
+      `http://${serverCredentials.host}/backups/${backup.originalName}`,
+      backup.originalName,
+      serverCredentials.apiKey
+    );
+
+    notifySuccess('Backup download started.');
+  };
+
   return (
     <Dropdown>
       <DropdownTrigger>
@@ -91,6 +105,13 @@ const BackupActions = ({ backup }: TBackupActionsProps) => {
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="Static Actions">
+        <DropdownItem
+          key="download"
+          endContent={<IconRestore size="1.0rem" />}
+          onClick={onDownloadClick}
+        >
+          Download
+        </DropdownItem>
         <DropdownItem
           key="restore"
           endContent={<IconRestore size="1.0rem" />}

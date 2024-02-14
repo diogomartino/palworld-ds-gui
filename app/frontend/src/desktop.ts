@@ -39,6 +39,9 @@ export const DesktopAPI = {
   openLogFile: async () => {
     await App.OpenLogs();
   },
+  downloadFile: async (url: string, fileName: string, apiKey: string) => {
+    await App.DownloadFile(url, fileName, apiKey);
+  },
   rcon: {
     execute: async (command: string) => {
       const state = store.getState();

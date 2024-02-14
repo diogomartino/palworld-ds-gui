@@ -51,6 +51,7 @@ const Initializing = () => {
             <Input
               size="lg"
               label="API Key"
+              type="password"
               placeholder=""
               endContent={
                 <div className="cursor-default">

@@ -3,8 +3,12 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+	"os"
 	rconclient "palword-ds-gui/rcon-client"
 	"palword-ds-gui/utils"
+	"path"
 
 	"github.com/gocolly/colly/v2"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -80,4 +84,41 @@ func (a *App) SaveLog(log string) {
 
 func (a *App) OpenLogs() {
 	utils.OpenExplorerWithFile(utils.Config.AppDataDir, "logs.txt")
+}
+
+func (a *App) DownloadFile(url string, filename string, authToken string) error {
+	path := path.Join(utils.GetCurrentDir(), filename)
+	utils.LogToFile(fmt.Sprintf("Downloading %s to %s", url, path))
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", authToken)
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("server returned non-200 status: %d %s", resp.StatusCode, resp.Status)
+	}
+
+	out, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return err
+	}
+
+	utils.OpenExplorerWithFile(utils.GetCurrentDir(), filename)
+
+	return nil
 }
