@@ -16,8 +16,12 @@ type ClientInitRequest struct {
 }
 
 type ClientInitResData struct {
-	CurrentServerStatus string `json:"currentServerStatus"`
-	CurrentLaunchParams string `json:"currentLaunchParams"`
+	CurrentServerStatus    string                        `json:"currentServerStatus"`
+	CurrentLaunchParams    string                        `json:"currentLaunchParams"`
+	CurrentConfig          string                        `json:"currentConfig"`
+	CurrentSaveName        string                        `json:"currentSaveName"`
+	CurrentBackupsSettings utils.PersistedSettingsBackup `json:"currentBackupsSettings"`
+	CurrentBackupsList     []Backup                      `json:"currentBackupsList"`
 }
 
 type ClientInitRes struct {
@@ -50,12 +54,23 @@ func ClientInitHandler(conn *websocket.Conn, data []byte) {
 		currentState = "STARTED"
 	}
 
+	backupsList, err := backupmanager.GetBackupsList()
+	if err != nil {
+		utils.Log(err.Error())
+		backupsList = []Backup{}
+	}
+
 	conn.WriteJSON(ClientInitRes{
 		Event:   clientInitEvent,
 		EventId: message.EventId,
 		Success: true,
-		Data:    ClientInitResData{CurrentServerStatus: currentState, CurrentLaunchParams: utils.Settings.General.LaunchParams},
+		Data: ClientInitResData{
+			CurrentServerStatus:    currentState,
+			CurrentLaunchParams:    utils.Settings.General.LaunchParams,
+			CurrentConfig:          ReadConfig(),
+			CurrentSaveName:        ReadSaveName(),
+			CurrentBackupsSettings: utils.Settings.Backup,
+			CurrentBackupsList:     backupsList,
+		},
 	})
-
-	// TODO: might be a good idea to send all the needed state to the client (config, backup settings, save name, etc.) instead of making multiple requests
 }

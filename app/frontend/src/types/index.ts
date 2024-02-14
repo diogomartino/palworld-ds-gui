@@ -77,6 +77,10 @@ export type TServerCredentials = {
 export type TClientInitedData = {
   currentServerStatus: ServerStatus;
   currentLaunchParams: string;
+  currentConfig: string;
+  currentSaveName: string;
+  currentBackupsSettings: TBackupSettings;
+  currentBackupsList: TBackup[];
 };
 
 export type TSettings = {

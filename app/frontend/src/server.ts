@@ -23,7 +23,7 @@ export const ServerAPI = {
     return new Promise((resolve, reject) => {
       const state = store.getState();
       const { socket } = socketStateSelector(state);
-      let timeoutId: number | undefined = undefined;
+      let timeoutId: NodeJS.Timeout | undefined = undefined;
 
       try {
         const eventId = Math.random().toString(36).substring(2);

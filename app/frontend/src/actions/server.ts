@@ -1,10 +1,23 @@
 import { serverSliceActions } from '../store/server-slice';
 import { store } from '../store';
-import { TConfig } from '../types/server-config';
+import { ConfigKey, TConfig } from '../types/server-config';
 import { ServerStatus } from '../types';
 import { consolesSliceActions } from '../store/console-slice';
+import { rconCredentialsSelector } from '../selectors/app';
+import { setRconCredentials } from './app';
 
 export const setConfig = (config: TConfig) => {
+  const state = store.getState();
+  const rconCredentials = rconCredentialsSelector(state);
+
+  // auto fill rcon credentials if they are not set
+  if (!rconCredentials.host && !rconCredentials.password) {
+    setRconCredentials(
+      `127.0.0.1:${config[ConfigKey.RCONPort]}`,
+      config[ConfigKey.AdminPassword]
+    );
+  }
+
   store.dispatch(serverSliceActions.setConfig(config));
 };
 

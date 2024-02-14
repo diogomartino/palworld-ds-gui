@@ -8,8 +8,8 @@ import {
   TClientInitedData,
   TConsoleEntry
 } from '../types';
-import { fetchServerInfo, setLaunchParams } from './app';
-import { setBackupsList, setConfig, setSaveName, setStatus } from './server';
+import { setLaunchParams } from './app';
+import { setBackupsList, setConfig, setSaveName } from './server';
 import { parseConfig } from '../helpers/config-parser';
 import { addConsoleEntry } from './console';
 
@@ -56,11 +56,17 @@ export const onAddConsoleEntry = (message: string) => {
 };
 
 export const onClientInited = (data: TClientInitedData) => {
-  setStatus(data.currentServerStatus);
-  setLaunchParams(data.currentLaunchParams);
+  console.log('! onClientInited', data);
+
+  onServerStatusChanged(data.currentServerStatus);
+  onLaunchParamsChanged(data.currentLaunchParams);
+  onServerConfigChanged(data.currentConfig);
+  onServerSaveNameChanged(data.currentSaveName);
+  onBackupSettingsUpdated(data.currentBackupsSettings);
+  onBackupListUpdated(data.currentBackupsList);
+
   setSocketInited(true);
   setSocketConnecting(false);
-  fetchServerInfo();
 };
 
 export const onBackupListUpdated = (data) => {
