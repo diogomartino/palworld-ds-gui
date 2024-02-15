@@ -26,11 +26,6 @@ The `server` folder should contain the `PalServer.exe` executable and all the ot
 
 ## GUI server parameters
 
-    flag.BoolVar(&Launch.ForceNewKey, "newkey", false, "Generate a new API key")
-    flag.BoolVar(&Launch.ShowKey, "showkey", false, "Show the current API key")
-    flag.BoolVar(&Launch.Help, "help", false, "Show help")
-    flag.IntVar(&Launch.Port, "port", 21577, "Port to run the server on")
-
 | Param    | Description               | Default |
 | -------- | ------------------------- | ------- |
 | -newkey  | Generate a new API key    |
