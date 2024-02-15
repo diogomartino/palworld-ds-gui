@@ -59,12 +59,12 @@ jobs:
           jq --arg new_version "$new_version" '.productVersion = $new_version' ./server/server.json > temp_wails.json
           mv temp_wails.json ./server/server.json
 
-      # - name: Commit and Push bump
-      #   run: |
-      #     git add ./app/wails.json
-      #     git add ./server/server.json
-      #     git commit -m "Bump version to v${{ steps.bump_version.outputs.BUILD_VERSION }}"
-      #     git push
+      - name: Commit and Push bump
+        run: |
+          git add ./app/wails.json
+          git add ./server/server.json
+          git commit -m "Bump version to v${{ steps.bump_version.outputs.BUILD_VERSION }}"
+          git push
 
       - name: Setup GoLang
         uses: actions/setup-go@v4
@@ -86,10 +86,10 @@ jobs:
         run: go build -o PalworldDSGUI_WinServer.exe
         shell: bash
 
-      - name: Build Linux Server
-        working-directory: ./server
-        run: GOOS=linux GOARCH=amd64 go build -o PalworldDSGUI_LinuxServer
-        shell: bash
+      # - name: Build Linux Server
+      #   working-directory: ./server
+      #   run: GOOS=linux GOARCH=amd64 go build -o PalworldDSGUI_LinuxServer
+      #   shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
@@ -98,19 +98,17 @@ jobs:
           path: |
             ./app/build/bin/PalworldDSGui.exe
             ./server/PalworldDSGUI_WinServer.exe
-            ./server/PalworldDSGUI_LinuxServer
 
-      # - name: Create Release
-      #   id: create_release
-      #   uses: softprops/action-gh-release@v1
-      #   with:
-      #     files: |
-      #       ./app/build/bin/PalworldDSGui.exe
-      #       ./server/PalworldDSGUI_WinServer.exe
-      #       ./server/PalworldDSGUI_LinuxServer
-      #     tag_name: v${{ steps.bump_version.outputs.BUILD_VERSION }}
-      #     name: Release v${{ steps.bump_version.outputs.BUILD_VERSION }}
-      #     draft: true
-      #     body: |
-      #       ## Changelog
-      #       No changelog available yet.
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./app/build/bin/PalworldDSGui.exe
+            ./server/PalworldDSGUI_WinServer.exe
+          tag_name: v${{ steps.bump_version.outputs.BUILD_VERSION }}
+          name: Release v${{ steps.bump_version.outputs.BUILD_VERSION }}
+          draft: true
+          body: |
+            ## Changelog
+            No changelog available yet.
