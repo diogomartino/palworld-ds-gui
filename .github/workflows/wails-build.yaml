@@ -34,7 +34,7 @@ jobs:
         id: extract_version
         shell: bash
         run: |
-          version=$(jq -r '.info.productVersion' ./wails.json)
+          version=$(jq -r '.info.productVersion' ./app/wails.json)
           echo "Version extracted from wails.json: $version"
           echo "CURRENT_VERSION=$version" >> "$GITHUB_OUTPUT"
 
@@ -53,14 +53,18 @@ jobs:
           echo "Bumped version to: $new_version"
           echo "BUILD_VERSION=$new_version" >> "$GITHUB_OUTPUT"
 
-          jq --arg new_version "$new_version" '.info.productVersion = $new_version' ./wails.json > temp_wails.json
-          mv temp_wails.json ./wails.json
+          jq --arg new_version "$new_version" '.info.productVersion = $new_version' ./app/wails.json > temp_wails.json
+          mv temp_wails.json ./app/wails.json
 
-      - name: Commit and Push bump
-        run: |
-          git add wails.json
-          git commit -m "Bump version to v${{ steps.bump_version.outputs.BUILD_VERSION }}"
-          git push
+          jq --arg new_version "$new_version" '.productVersion = $new_version' ./server/server.json > temp_wails.json
+          mv temp_wails.json ./server/server.json
+
+      # - name: Commit and Push bump
+      #   run: |
+      #     git add ./app/wails.json
+      #     git add ./server/server.json
+      #     git commit -m "Bump version to v${{ steps.bump_version.outputs.BUILD_VERSION }}"
+      #     git push
 
       - name: Setup GoLang
         uses: actions/setup-go@v4
@@ -73,23 +77,32 @@ jobs:
         shell: bash
 
       - name: Build Windows App
-        working-directory: .
+        working-directory: ./app
         run: wails build --clean --platform windows/amd64 -o PalworldDSGui.exe
+        shell: bash
+
+      - name: Build Server
+        working-directory: ./server
+        run: go build -o PalworldDSGUI_Server.exe
         shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
           name: PalworldDSGui.exe
-          path: ./build/bin/PalworldDSGui.exe
+          path: |
+            ./app/build/bin/PalworldDSGui.exe
+            ./server/PalworldDSGUI_Server.exe
 
-      - name: Create Release
-        id: create_release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: ./build/bin/PalworldDSGui.exe
-          tag_name: v${{ steps.bump_version.outputs.BUILD_VERSION }}
-          name: Release v${{ steps.bump_version.outputs.BUILD_VERSION }}
-          body: |
-            ## Changelog
-            No changelog available yet.
+      # - name: Create Release
+      #   id: create_release
+      #   uses: softprops/action-gh-release@v1
+      #   with:
+      #     files: |
+      #       ./app/build/bin/PalworldDSGui.exe
+      #       ./server/PalworldDSGUI_Server.exe
+      #     tag_name: v${{ steps.bump_version.outputs.BUILD_VERSION }}
+      #     name: Release v${{ steps.bump_version.outputs.BUILD_VERSION }}
+      #     body: |
+      #       ## Changelog
+      #       No changelog available yet.
