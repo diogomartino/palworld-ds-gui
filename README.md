@@ -8,10 +8,10 @@ You can downloads the latest versions from the [releases page](https://github.co
 
 [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) is required. You most likely already have it installed, so you don't need to worry.
 
+### [How To Use - Click here](HOW_TO_USE.md)
+
 > [!WARNING]  
 > Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
-
-[Quick Start Guide](HOW_TO_USE.md)
 
 ## Screenshots
 
