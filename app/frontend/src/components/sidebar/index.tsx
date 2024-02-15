@@ -48,10 +48,6 @@ const Sidebar = () => {
             label="Disconnect"
             onClick={disconnect}
             iconComponent={IconDoorExit}
-            iconProps={{
-              color: hasUpdates ? '#3b82f6' : '#a0a0a0',
-              className: hasUpdates && 'animate-ping duration-1000'
-            }}
           />
         </div>
       </div>
