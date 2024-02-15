@@ -29,6 +29,7 @@ func PrintApiKey() {
 func (a *Api) Init() {
 	if !HasApiKey() || utils.Launch.ForceNewKey {
 		GenerateApiKey()
+		utils.SaveSettings()
 	}
 
 	if utils.Launch.ShowKey {
