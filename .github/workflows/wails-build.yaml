@@ -81,10 +81,15 @@ jobs:
         run: wails build --clean --platform windows/amd64 -o PalworldDSGui.exe
         shell: bash
 
-      - name: Build Server
+      - name: Build Windows Server
         working-directory: ./server
-        run: go build -o PalworldDSGUI_Server.exe
+        run: go build -o PalworldDSGUI_WinServer.exe
         shell: bash
+
+      # - name: Build Linux Server
+      #   working-directory: ./server
+      #   run: GOOS=linux GOARCH=amd64 go build -o PalworldDSGUI_LinuxServer
+      #   shell: bash
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
@@ -92,7 +97,7 @@ jobs:
           name: PalworldDSGui.exe
           path: |
             ./app/build/bin/PalworldDSGui.exe
-            ./server/PalworldDSGUI_Server.exe
+            ./server/PalworldDSGUI_WinServer.exe
 
       - name: Create Release
         id: create_release
@@ -100,7 +105,7 @@ jobs:
         with:
           files: |
             ./app/build/bin/PalworldDSGui.exe
-            ./server/PalworldDSGUI_Server.exe
+            ./server/PalworldDSGUI_WinServer.exe
           tag_name: v${{ steps.bump_version.outputs.BUILD_VERSION }}
           name: Release v${{ steps.bump_version.outputs.BUILD_VERSION }}
           draft: true
