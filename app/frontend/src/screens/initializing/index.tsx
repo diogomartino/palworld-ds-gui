@@ -5,6 +5,7 @@ import { IconInfoCircle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { setServerCredentials } from '../../actions/app';
 import useServerCredentials from '../../hooks/use-server-credentials';
+import { DesktopAPI } from '../../desktop';
 
 const Initializing = () => {
   const serverCredentials = useServerCredentials();
@@ -89,7 +90,17 @@ const Initializing = () => {
 
           <div className="flex flex-col items-center">
             <p className="text-sm text-neutral-500">
-              If you need help, please read the quick start guide here.
+              If you need help, please create an issue{' '}
+              <span
+                className="text-blue-500 hover:underline cursor-pointer"
+                onClick={() =>
+                  DesktopAPI.openUrl(
+                    'https://github.com/diogomartino/palworld-ds-gui/issues'
+                  )
+                }
+              >
+                here.
+              </span>
             </p>
           </div>
         </div>
