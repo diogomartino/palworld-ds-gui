@@ -21,7 +21,7 @@ You can downloads the latest versions from the [releases page](https://github.co
 ![Admin](https://i.imgur.com/49giAIK.png)
 ![Backups](https://i.imgur.com/3IboT0o.png)
 
-## Developmen
+## Development
 
 ### Requirements
 
