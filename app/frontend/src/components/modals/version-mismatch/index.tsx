@@ -8,58 +8,63 @@ import {
 } from '@nextui-org/react';
 import { closeModals } from '../../../actions/modal';
 import useModalsInfo from '../../../hooks/use-modals-info';
-import { useMemo } from 'react';
+import { DesktopAPI } from '../../../desktop';
 
-type TConfirmActionModalProps = {
-  onCancel?: () => void;
-  onConfirm?: () => void;
-  title?: string;
-  message?: string | React.ReactNode;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  variant?: 'danger' | 'info';
+type TVersionMismatchModalProps = {
+  clientVersion: string;
+  serverVersion: string;
 };
 
-const ConfirmActionModal = ({
-  onCancel,
-  onConfirm,
-  title,
-  message,
-  confirmLabel,
-  cancelLabel,
-  variant
-}: TConfirmActionModalProps) => {
+const VersionMismatchModal = ({
+  clientVersion,
+  serverVersion
+}: TVersionMismatchModalProps) => {
   const { isModalOpen } = useModalsInfo();
-  const buttonColor = useMemo(
-    () => (variant === 'danger' ? 'danger' : 'primary'),
-    [variant]
-  );
 
   return (
     <Modal
       backdrop="blur"
       isOpen={isModalOpen}
       onClose={() => {
-        onCancel?.();
         closeModals();
       }}
       scrollBehavior="inside"
     >
       <ModalContent>
         <ModalHeader className="flex gap-1 items-center">
-          <p>{title ?? 'Please confirm your action.'}</p>
+          <p>Version Mismatch</p>
         </ModalHeader>
-        <ModalBody>{message ?? 'Are you sure?'}</ModalBody>
-        <ModalFooter className="justify-center">
-          <Button variant="ghost" onClick={() => onCancel?.()}>
-            {cancelLabel ?? 'Cancel'}
-          </Button>
-          <Button
-            variant="solid"
-            onClick={() => onConfirm?.()}
-            color={buttonColor}
+        <ModalBody>
+          <p>
+            The server version is different from the client version. This may
+            cause issues. Please make sure the server and this app are up to
+            date.
+          </p>
+          <div className="flex flex-col">
+            <div>
+              <span className="text-gray-500">Server version:</span>
+              <span className="ml-1">{serverVersion}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">Client version:</span>
+              <span className="ml-1">{clientVersion}</span>
+            </div>
+          </div>
+
+          <span
+            className="text-blue-500 hover:underline cursor-pointer"
+            onClick={() =>
+              DesktopAPI.openUrl(
+                'https://github.com/diogomartino/palworld-ds-gui/releases/latest'
+              )
+            }
           >
-            {confirmLabel ?? 'Confirm'}
+            Download latest versions here
+          </span>
+        </ModalBody>
+        <ModalFooter className="justify-center">
+          <Button variant="shadow" color="primary" onClick={closeModals}>
+            I understand
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -67,4 +72,4 @@ const ConfirmActionModal = ({
   );
 };
 
-export default ConfirmActionModal;
+export default VersionMismatchModal;

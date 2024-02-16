@@ -2,7 +2,7 @@ import { createElement } from 'react';
 import useModalsInfo from '../../hooks/use-modals-info';
 import { Modal } from '../../types';
 import ConfirmActionModal from './confirm-action';
-import VersionMismatchModal from './confirm-action';
+import VersionMismatchModal from './version-mismatch';
 
 const ModalsMap = {
   [Modal.ACTION_CONFIRMATION]: ConfirmActionModal,
