@@ -168,7 +168,7 @@ const Backups = () => {
 
     if (
       isNaN(settings.intervalHours) ||
-      settings.intervalHours < 1 ||
+      settings.intervalHours < 0 ||
       settings.intervalHours > 24
     ) {
       newErrors.intervalHours = true;
@@ -238,13 +238,14 @@ const Backups = () => {
           isInvalid={!!errors.intervalHours}
           isDisabled={!settings.enabled}
           labelPlacement="outside"
+          min={0}
+          max={24}
+          step={0.1}
           placeholder="1"
           type="number"
           endContent={<span className="text-sm">Hours</span>}
           value={settings.intervalHours}
-          onChange={(e) =>
-            onSettingsChange('intervalHours', parseInt(e.target.value))
-          }
+          onChange={(e) => onSettingsChange('intervalHours', e.target.value)}
         />
 
         <Input

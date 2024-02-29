@@ -11,8 +11,8 @@ type StartBackupsRequest struct {
 	Event   string `json:"event"`
 	EventId string `json:"eventId"`
 	Data    struct {
-		Interval  int `json:"interval"`
-		KeepCount int `json:"keepCount"`
+		Interval  float32 `json:"interval"`
+		KeepCount int     `json:"keepCount"`
 	}
 }
 

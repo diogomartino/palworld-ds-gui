@@ -165,15 +165,15 @@ func (b *BackupManager) Init() {
 	}
 }
 
-func (b *BackupManager) Start(interval int, keepCount int) {
-	utils.Log(fmt.Sprintf("Creating backups every %d hours (keep %d)", interval, keepCount))
+func (b *BackupManager) Start(interval float32, keepCount int) {
+	utils.Log(fmt.Sprintf("Creating backups every %.2f hours (keep %d)", interval, keepCount))
 
 	utils.Settings.Backup.Enabled = true
 	utils.Settings.Backup.KeepCount = keepCount
 	utils.Settings.Backup.Interval = float32(interval)
 	utils.SaveSettings()
 
-	cronString := fmt.Sprintf("@every %dh", interval)
+	cronString := fmt.Sprintf("@every %.2fh", interval)
 
 	if b.cron != nil {
 		b.cron.Stop()
