@@ -8,10 +8,11 @@ import (
 )
 
 var (
-	steamcmd      *SteamCMD
-	servermanager *ServerManager
-	backupmanager *BackupManager
-	api           *Api
+	steamcmd            *SteamCMD
+	servermanager       *ServerManager
+	backupmanager       *BackupManager
+	timedrestartmanager *TimedRestartManager
+	api                 *Api
 )
 
 //go:embed server.json
@@ -33,6 +34,9 @@ func main() {
 
 	backupmanager = NewBackupManager()
 	backupmanager.Init()
+
+	timedrestartmanager = NewTimedRestartManager()
+	timedrestartmanager.Init()
 
 	api = NewApi()
 	api.Init()

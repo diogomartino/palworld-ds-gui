@@ -37,6 +37,8 @@ export enum SocketAction {
   WRITE_SAVE_NAME = 'WRITE_SAVE_NAME',
   START_BACKUPS = 'START_BACKUPS',
   STOP_BACKUPS = 'STOP_BACKUPS',
+  START_TIMED_RESTART = 'START_TIMED_RESTART',
+  STOP_TIMED_RESTART = 'STOP_TIMED_RESTART',
   GET_BACKUPS_LIST = 'GET_BACKUPS_LIST',
   DELETE_BACKUP = 'DELETE_BACKUP',
   CREATE_BACKUP = 'CREATE_BACKUP',
@@ -53,6 +55,7 @@ export enum SocketEvent {
   SERVER_SAVE_NAME_CHANGED = 'SERVER_SAVE_NAME_CHANGED',
   BACKUP_LIST_CHANGED = 'BACKUP_LIST_CHANGED',
   BACKUP_SETTINGS_CHANGED = 'BACKUP_SETTINGS_CHANGED',
+  TIMED_RESTART_SETTINGS_CHANGED = 'TIMED_RESTART_SETTINGS_CHANGED',
   LAUNCH_PARAMS_CHANGED = 'LAUNCH_PARAMS_CHANGED',
   CUSTOM_ERROR = 'CUSTOM_ERROR',
   ADD_CONSOLE_ENTRY = 'ADD_CONSOLE_ENTRY'
@@ -70,6 +73,11 @@ export type TBackupSettings = {
   keepCount: number;
 };
 
+export type TTimedRestartSettings = {
+  enabled: boolean;
+  intervalHours: number;
+};
+
 export type TServerCredentials = {
   host: string;
   apiKey: string;
@@ -81,6 +89,7 @@ export type TClientInitedData = {
   currentConfig: string;
   currentSaveName: string;
   currentBackupsSettings: TBackupSettings;
+  currentTimedRestartSettings: TTimedRestartSettings;
   currentBackupsList: TBackup[];
   serverVersion: string;
 };

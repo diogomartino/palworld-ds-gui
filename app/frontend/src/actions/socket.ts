@@ -68,6 +68,7 @@ export const onClientInited = (data: TClientInitedData) => {
   onServerConfigChanged(data.currentConfig);
   onServerSaveNameChanged(data.currentSaveName);
   onBackupSettingsUpdated(data.currentBackupsSettings);
+  onTimedRestartSettingsUpdated(data.currentTimedRestartSettings);
   onBackupListUpdated(data.currentBackupsList);
 
   setServerVersion(data.serverVersion);
@@ -101,6 +102,17 @@ export const onBackupSettingsUpdated = (data) => {
   };
 
   store.dispatch(serverSliceActions.setBackupSettings(backupsSettings));
+};
+
+export const onTimedRestartSettingsUpdated = (data) => {
+  const timedRestartSettings = {
+    enabled: data.Enabled,
+    intervalHours: data.Interval
+  };
+
+  store.dispatch(
+    serverSliceActions.setTimedRestartSettings(timedRestartSettings)
+  );
 };
 
 export const onLaunchParamsChanged = (launchParams: string) => {

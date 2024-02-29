@@ -1,6 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { TConfig } from '../types/server-config';
-import { ServerStatus, TBackup, TBackupSettings } from '../types';
+import {
+  ServerStatus,
+  TBackup,
+  TBackupSettings,
+  TTimedRestartSettings
+} from '../types';
 
 export interface IServerState {
   config: TConfig; // PalWorldSettings.ini
@@ -8,6 +13,7 @@ export interface IServerState {
   status: ServerStatus;
   backupsList: TBackup[];
   backupSettings: TBackupSettings;
+  timedRestartSettings: TTimedRestartSettings;
   version: string | undefined;
 }
 
@@ -20,6 +26,10 @@ const initialState: IServerState = {
     enabled: false,
     intervalHours: 1,
     keepCount: 24
+  },
+  timedRestartSettings: {
+    enabled: false,
+    intervalHours: 4
   },
   version: undefined
 };
@@ -47,6 +57,9 @@ export const serverSlice = createSlice({
     },
     setBackupSettings: (state, action) => {
       state.backupSettings = action.payload;
+    },
+    setTimedRestartSettings: (state, action) => {
+      state.timedRestartSettings = action.payload;
     },
     setVersion: (state, action) => {
       state.version = action.payload;
