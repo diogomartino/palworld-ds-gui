@@ -30,15 +30,15 @@ You can downloads the latest versions from the [releases page](https://github.co
 - [Node.js](https://nodejs.org/)
 - [pnpm](https://pnpm.io/)
 
-```
-wails dev -s
-```
+In `./app` run `wails dev -s` to start the app.
 
-## Building
+## Building the app
 
-```
-wails build --clean --platform windows/amd64
-```
+Navigate to `./app` and run `wails build --clean --platform windows/amd64`.
+
+## Building the server
+
+Navigate to `./server` and run `go build -o server.exe`.
 
 ## Contributing
 
