@@ -133,6 +133,26 @@ export const ServerAPI = {
       notifyError('Could not save launch params');
     }
   },
+  timedRestart: {
+    start: async (interval: number) => {
+      try {
+        await ServerAPI.send(SocketAction.START_TIMED_RESTART, {
+          interval
+        });
+        notifySuccess('Timed restart is now enabled');
+      } catch (error) {
+        notifyError('Could not start timed restart');
+      }
+    },
+    stop: async () => {
+      try {
+        await ServerAPI.send(SocketAction.STOP_TIMED_RESTART);
+        notifySuccess('Timed restart is now disabled');
+      } catch {
+        notifyError('Could not stop timed restart');
+      }
+    }
+  },
   backups: {
     start: async (interval: number, keepCount: number) => {
       try {

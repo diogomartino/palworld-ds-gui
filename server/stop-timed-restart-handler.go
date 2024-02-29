@@ -7,41 +7,41 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type StopBackupsRequest struct {
+type StopTimedRestartRequest struct {
 	Event   string `json:"event"`
 	EventId string `json:"eventId"`
 }
 
-type StopBackupsRes struct {
+type StopTimedRestartRes struct {
 	Event   string `json:"event"`
 	EventId string `json:"eventId"`
 	Success bool   `json:"success"`
 	Error   string `json:"error"`
 }
 
-var stopBackupsEvent = "STOP_BACKUPS"
+var stopTimedRestartEvent = "STOP_TIMED_RESTART"
 
-func StopBackupsHandler(conn *websocket.Conn, data []byte) {
-	var message StopBackupsRequest
+func StopTimedRestartHandler(conn *websocket.Conn, data []byte) {
+	var message StopTimedRestartRequest
 
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(StopBackupsRes{
-			Event:   stopBackupsEvent,
+		conn.WriteJSON(StopTimedRestartRes{
+			Event:   stopTimedRestartEvent,
 			EventId: message.EventId,
 			Success: false,
 		})
 		return
 	}
 
-	backupmanager.Stop()
+	timedrestartmanager.Stop()
 
-	conn.WriteJSON(StopBackupsRes{
-		Event:   stopBackupsEvent,
+	conn.WriteJSON(StopTimedRestartRes{
+		Event:   stopTimedRestartEvent,
 		EventId: message.EventId,
 		Success: true,
 	})
 
-	EmitBackupSettings(nil)
+	EmitTimedRestartSettings(nil)
 }

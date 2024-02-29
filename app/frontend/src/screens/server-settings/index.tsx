@@ -82,7 +82,7 @@ const ServerSettings = () => {
   return (
     <Layout
       className="relative flex flex-col gap-4"
-      title="Server Settings"
+      title="Game Settings"
       subtitle="Server must be restarted for changes to take effect"
     >
       <div className="flex flex-col gap-2 mb-8">

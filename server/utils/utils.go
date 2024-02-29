@@ -62,14 +62,20 @@ type PersistedSettingsBackup struct {
 	KeepCount int     `ini:"keepCount"`
 }
 
+type PersistedTimedRestart struct {
+	Enabled  bool    `ini:"enabled"`
+	Interval float32 `ini:"interval"`
+}
+
 type PersistedSettingsGeneral struct {
 	APIKey       string `ini:"apiKey"`
 	LaunchParams string `ini:"launchParams"`
 }
 
 type PersistedSettings struct {
-	General PersistedSettingsGeneral
-	Backup  PersistedSettingsBackup
+	General      PersistedSettingsGeneral
+	Backup       PersistedSettingsBackup
+	TimedRestart PersistedTimedRestart
 }
 
 var Settings PersistedSettings = PersistedSettings{
@@ -81,6 +87,10 @@ var Settings PersistedSettings = PersistedSettings{
 		Enabled:   false,
 		Interval:  1,
 		KeepCount: 24,
+	},
+	TimedRestart: PersistedTimedRestart{
+		Enabled:  false,
+		Interval: 4,
 	},
 }
 
@@ -142,6 +152,9 @@ func LoadSettings() error {
 	if err = cfg.Section("Backup").MapTo(&Settings.Backup); err != nil {
 		return fmt.Errorf("failed to map Backup section: %v", err)
 	}
+	if err = cfg.Section("TimedRestart").MapTo(&Settings.TimedRestart); err != nil {
+		return fmt.Errorf("failed to map TimedRestart section: %v", err)
+	}
 
 	return nil
 }
@@ -154,6 +167,9 @@ func SaveSettings() error {
 	}
 	if err := cfg.Section("Backup").ReflectFrom(&Settings.Backup); err != nil {
 		return fmt.Errorf("failed to reflect Backup section: %v", err)
+	}
+	if err := cfg.Section("TimedRestart").ReflectFrom(&Settings.TimedRestart); err != nil {
+		return fmt.Errorf("failed to reflect TimedRestart section: %v", err)
 	}
 
 	if err := cfg.SaveTo(Config.PersistedSettingsPath); err != nil {

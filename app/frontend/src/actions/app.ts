@@ -57,6 +57,24 @@ export const changeBackupSettings = async (
   );
 };
 
+export const changeTimedRestartSettings = async (
+  enabled: boolean,
+  intervalHours: number
+) => {
+  if (enabled) {
+    await ServerAPI.timedRestart.start(+intervalHours);
+  } else {
+    await ServerAPI.timedRestart.stop();
+  }
+
+  store.dispatch(
+    serverSliceActions.setTimedRestartSettings({
+      enabled,
+      intervalHours
+    })
+  );
+};
+
 export const checkForUpdates = async () => {
   try {
     const response = await fetch(

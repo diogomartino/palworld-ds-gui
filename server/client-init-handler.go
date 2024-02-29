@@ -16,13 +16,14 @@ type ClientInitRequest struct {
 }
 
 type ClientInitResData struct {
-	CurrentServerStatus    string                        `json:"currentServerStatus"`
-	CurrentLaunchParams    string                        `json:"currentLaunchParams"`
-	CurrentConfig          string                        `json:"currentConfig"`
-	CurrentSaveName        string                        `json:"currentSaveName"`
-	CurrentBackupsSettings utils.PersistedSettingsBackup `json:"currentBackupsSettings"`
-	CurrentBackupsList     []Backup                      `json:"currentBackupsList"`
-	ServerVersion          string                        `json:"serverVersion"`
+	CurrentServerStatus         string                        `json:"currentServerStatus"`
+	CurrentLaunchParams         string                        `json:"currentLaunchParams"`
+	CurrentConfig               string                        `json:"currentConfig"`
+	CurrentSaveName             string                        `json:"currentSaveName"`
+	CurrentBackupsSettings      utils.PersistedSettingsBackup `json:"currentBackupsSettings"`
+	CurrentTimedRestartSettings utils.PersistedTimedRestart   `json:"currentTimedRestartSettings"`
+	CurrentBackupsList          []Backup                      `json:"currentBackupsList"`
+	ServerVersion               string                        `json:"serverVersion"`
 }
 
 type ClientInitRes struct {
@@ -66,13 +67,14 @@ func ClientInitHandler(conn *websocket.Conn, data []byte) {
 		EventId: message.EventId,
 		Success: true,
 		Data: ClientInitResData{
-			CurrentServerStatus:    currentState,
-			CurrentLaunchParams:    utils.Settings.General.LaunchParams,
-			CurrentConfig:          ReadConfig(),
-			CurrentSaveName:        ReadSaveName(),
-			CurrentBackupsSettings: utils.Settings.Backup,
-			CurrentBackupsList:     backupsList,
-			ServerVersion:          utils.Config.ServerVersion,
+			CurrentServerStatus:         currentState,
+			CurrentLaunchParams:         utils.Settings.General.LaunchParams,
+			CurrentConfig:               ReadConfig(),
+			CurrentSaveName:             ReadSaveName(),
+			CurrentBackupsSettings:      utils.Settings.Backup,
+			CurrentTimedRestartSettings: utils.Settings.TimedRestart,
+			CurrentBackupsList:          backupsList,
+			ServerVersion:               utils.Config.ServerVersion,
 		},
 	})
 }

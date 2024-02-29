@@ -104,6 +104,10 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			StartBackupsHandler(conn, p)
 		case stopBackupsEvent:
 			StopBackupsHandler(conn, p)
+		case startTimedRestartEvent:
+			StartTimedRestartHandler(conn, p)
+		case stopTimedRestartEvent:
+			StopTimedRestartHandler(conn, p)
 		case createBackupEvent:
 			CreateBackupHandler(conn, p)
 		case getBackupsEvent:
@@ -166,6 +170,20 @@ func EmitBackupSettings(exclude *websocket.Conn) {
 		Event:   "BACKUP_SETTINGS_CHANGED",
 		Success: true,
 		Data:    utils.Settings.Backup,
+	}, exclude)
+}
+
+func EmitTimedRestartSettings(exclude *websocket.Conn) {
+	type TimedRestartSettingsResponse struct {
+		Event   string                      `json:"event"`
+		Success bool                        `json:"success"`
+		Data    utils.PersistedTimedRestart `json:"data"`
+	}
+
+	BroadcastJSON(TimedRestartSettingsResponse{
+		Event:   "TIMED_RESTART_SETTINGS_CHANGED",
+		Success: true,
+		Data:    utils.Settings.TimedRestart,
 	}, exclude)
 }
 

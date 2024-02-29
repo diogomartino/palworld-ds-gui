@@ -1,5 +1,6 @@
 import {
   IconBolt,
+  IconDeviceGamepad2,
   IconDoorExit,
   IconFiles,
   IconInfoHexagon,
@@ -21,8 +22,13 @@ const Sidebar = () => {
         <div>
           <NavItem label="Server" to="/" iconComponent={IconServer} />
           <NavItem
-            label="Settings"
+            label="Game Settings"
             to="/settings"
+            iconComponent={IconDeviceGamepad2}
+          />
+          <NavItem
+            label="Other Settings"
+            to="/additional-settings"
             iconComponent={IconSettings}
           />
           <NavItem label="Admin" to="/admin" iconComponent={IconBolt} />
