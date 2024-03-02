@@ -76,7 +76,7 @@ export const onClientInited = (data: TClientInitedData) => {
   setSocketConnecting(false);
 
   if (data.serverVersion !== APP_VERSION) {
-    openModal(Modal.ACTION_CONFIRMATION, {
+    openModal(Modal.VERSION_MISMATCH, {
       clientVersion: APP_VERSION,
       serverVersion: data.serverVersion
     });
