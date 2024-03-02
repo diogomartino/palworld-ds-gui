@@ -1,6 +1,6 @@
 # Palworld Dedicated Server GUI
 
-This is a GUI for the Palworld Dedicated Server. Configure and manage your server visually. Only Windows is supported at the moment. Control your server from anywhere with the web interface.
+This is a GUI for the Palworld Dedicated Server. Configure and manage your remote/local server visually. Control your server from anywhere with the web interface.
 
 ## Web Interface
 
