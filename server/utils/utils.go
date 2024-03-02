@@ -38,22 +38,23 @@ type AppConfig struct {
 }
 
 var Config AppConfig = AppConfig{
-	SteamCmdPath:               filepath.Join(GetCurrentDir(), "steamcmd"),
-	SteamCmdExe:                filepath.Join(GetCurrentDir(), "steamcmd", "steamcmd.exe"),
-	ServerPath:                 filepath.Join(GetCurrentDir(), "server"),
-	ServerExe:                  filepath.Join(GetCurrentDir(), "server", "PalServer.exe"),
-	ServerDefaultConfigPath:    filepath.Join(GetCurrentDir(), "server", "DefaultPalWorldSettings.ini"),
-	ServerConfigDir:            filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer"),
-	ServerConfigPath:           filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini"),
-	ServerGameUserSettingsPath: filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "Config", "WindowsServer", "GameUserSettings.ini"),
-	ServerSaveDir:              filepath.Join(GetCurrentDir(), "server", "Pal", "Saved", "SaveGames", "0"),
-	LogsPath:                   filepath.Join(GetCurrentDir(), "logs.txt"),
-	ServerProcessName:          "PalServer-Win64-Test-Cmd.exe",
-	BackupsPath:                filepath.Join(GetCurrentDir(), "backups"),
-	PersistedSettingsPath:      filepath.Join(GetCurrentDir(), "gui-server-settings.ini"),
-	SteamCmdUrl:                "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip",
-	AppId:                      "2394010",
-	ServerVersion:              "0.0.7",
+	AppId:         "2394010",
+	ServerVersion: "", // Will be read from server JSON on init
+	// Configs below are OS specific and will be set on init
+	SteamCmdPath:               "",
+	SteamCmdExe:                "",
+	ServerPath:                 "",
+	ServerExe:                  "",
+	ServerDefaultConfigPath:    "",
+	ServerConfigDir:            "",
+	ServerConfigPath:           "",
+	ServerGameUserSettingsPath: "",
+	ServerSaveDir:              "",
+	LogsPath:                   "",
+	ServerProcessName:          "",
+	BackupsPath:                "",
+	PersistedSettingsPath:      "",
+	SteamCmdUrl:                "",
 }
 
 type PersistedSettingsBackup struct {
@@ -99,6 +100,7 @@ type LaunchParams struct {
 	ShowKey     bool
 	Help        bool
 	Port        int
+	ServerPath  string
 }
 
 var Launch LaunchParams = LaunchParams{
@@ -106,12 +108,23 @@ var Launch LaunchParams = LaunchParams{
 	ShowKey:     false,
 	Help:        false,
 	Port:        21577,
+	ServerPath:  "server",
 }
 
 var EmitConsoleLog func(message string, excludeClient *websocket.Conn)
 
 func Init(serverJSON string) {
 	Config.ServerVersion = gjson.Get(serverJSON, "productVersion").String()
+
+	flag.BoolVar(&Launch.ForceNewKey, "newkey", false, "Generate a new API key")
+	flag.BoolVar(&Launch.ShowKey, "showkey", false, "Show the current API key")
+	flag.BoolVar(&Launch.Help, "help", false, "Show help")
+	flag.IntVar(&Launch.Port, "port", 21577, "Port to run the server on")
+	flag.StringVar(&Launch.ServerPath, "serverpath", "server", "Palworld Dedicated Server path (relative to the executable)")
+
+	flag.Parse()
+
+	InitWindowsConfigs()
 
 	logsFile, logErr := os.OpenFile(Config.LogsPath, os.O_RDWR|os.O_CREATE, 0666)
 	if logErr != nil {
@@ -130,14 +143,24 @@ func Init(serverJSON string) {
 		panic(err)
 	}
 
-	flag.BoolVar(&Launch.ForceNewKey, "newkey", false, "Generate a new API key")
-	flag.BoolVar(&Launch.ShowKey, "showkey", false, "Show the current API key")
-	flag.BoolVar(&Launch.Help, "help", false, "Show help")
-	flag.IntVar(&Launch.Port, "port", 21577, "Port to run the server on")
-
-	flag.Parse()
-
 	LogToFile("utils.go: Init() - Palword Dedicated Server GUI v"+Config.ServerVersion, false)
+}
+
+func InitWindowsConfigs() {
+	Config.SteamCmdPath = filepath.Join(GetCurrentDir(), "steamcmd")
+	Config.SteamCmdExe = filepath.Join(GetCurrentDir(), "steamcmd", "steamcmd.exe")
+	Config.ServerPath = filepath.Join(GetCurrentDir(), Launch.ServerPath)
+	Config.ServerExe = filepath.Join(GetCurrentDir(), Launch.ServerPath, "PalServer.exe")
+	Config.ServerDefaultConfigPath = filepath.Join(GetCurrentDir(), Launch.ServerPath, "DefaultPalWorldSettings.ini")
+	Config.ServerConfigDir = filepath.Join(GetCurrentDir(), Launch.ServerPath, "Pal", "Saved", "Config", "WindowsServer")
+	Config.ServerConfigPath = filepath.Join(GetCurrentDir(), Launch.ServerPath, "Pal", "Saved", "Config", "WindowsServer", "PalWorldSettings.ini")
+	Config.ServerGameUserSettingsPath = filepath.Join(GetCurrentDir(), Launch.ServerPath, "Pal", "Saved", "Config", "WindowsServer", "GameUserSettings.ini")
+	Config.ServerSaveDir = filepath.Join(GetCurrentDir(), Launch.ServerPath, "Pal", "Saved", "SaveGames", "0")
+	Config.LogsPath = filepath.Join(GetCurrentDir(), "logs.txt")
+	Config.ServerProcessName = "PalServer-Win64-Test-Cmd.exe"
+	Config.BackupsPath = filepath.Join(GetCurrentDir(), "backups")
+	Config.PersistedSettingsPath = filepath.Join(GetCurrentDir(), "gui-server-settings.ini")
+	Config.SteamCmdUrl = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
 }
 
 func LoadSettings() error {

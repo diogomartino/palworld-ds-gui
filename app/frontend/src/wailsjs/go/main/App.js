@@ -6,10 +6,6 @@ export function DownloadFile(arg1, arg2, arg3) {
   return window['go']['main']['App']['DownloadFile'](arg1, arg2, arg3);
 }
 
-export function GetSteamProfileURL(arg1) {
-  return window['go']['main']['App']['GetSteamProfileURL'](arg1);
-}
-
 export function InitApp() {
   return window['go']['main']['App']['InitApp']();
 }

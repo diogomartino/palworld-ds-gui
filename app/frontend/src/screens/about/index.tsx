@@ -5,6 +5,7 @@ import useHasUpdates from '../../hooks/use-latest-version';
 import { checkForUpdates } from '../../actions/app';
 import { useState } from 'react';
 import { IconRefresh } from '@tabler/icons-react';
+import { isWeb } from '../../helpers/is-web';
 
 const About = () => {
   const [loading, setLoading] = useState(false);
@@ -41,18 +42,20 @@ const About = () => {
         </p>
       }
     >
-      <div>
-        <Button
-          variant="shadow"
-          color="secondary"
-          size="sm"
-          onClick={onCheckForUpdatesClick}
-          isLoading={loading}
-          endContent={<IconRefresh size="0.9rem" />}
-        >
-          Check for updates now
-        </Button>
-      </div>
+      {!isWeb() && (
+        <div>
+          <Button
+            variant="shadow"
+            color="secondary"
+            size="sm"
+            onClick={onCheckForUpdatesClick}
+            isLoading={loading}
+            endContent={<IconRefresh size="0.9rem" />}
+          >
+            Check for updates now
+          </Button>
+        </div>
+      )}
 
       <p>
         This software is open source and available{' '}

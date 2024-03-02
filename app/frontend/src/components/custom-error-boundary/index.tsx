@@ -1,7 +1,8 @@
 import { Button } from '@nextui-org/react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { DesktopAPI } from '../../desktop';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
+import { trackError } from '../../helpers/tracker';
 
 type TErrorBoundaryProps = {
   children: React.ReactNode;
@@ -13,6 +14,12 @@ type TErrorFallbackProps = {
 };
 
 const ErrorFallback = ({ error }: TErrorFallbackProps) => {
+  useEffect(() => {
+    if (!error) return;
+
+    trackError(error);
+  }, [error]);
+
   return (
     <div className="flex flex-col gap-2 justify-center items-center h-full w-full">
       <p className="text-red-500 text-6xl">ERROR</p>

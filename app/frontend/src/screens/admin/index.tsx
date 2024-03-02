@@ -17,25 +17,25 @@ import {
 } from '@nextui-org/react';
 import Layout from '../../components/layout';
 import { DesktopAPI } from '../../desktop';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import useSteamImages from '../../hooks/use-steam-images';
 import {
   IconAlertCircle,
   IconDeviceFloppy,
   IconDotsVertical,
   IconHammer,
-  IconPlugConnected,
   IconRefresh,
   IconSend,
   IconUserCancel
 } from '@tabler/icons-react';
-import { TGenericObject } from '../../types';
+import { ServerStatus, TGenericObject } from '../../types';
 import { requestConfirmation } from '../../actions/modal';
 import { TRconInfo, TRconPlayer } from '../../types/rcon';
 import useServerConfig from '../../hooks/use-server-config';
 import { ConfigKey } from '../../types/server-config';
-import useRconCredentials from '../../hooks/use-rcon-credentials';
-import { notifySuccess, setRconCredentials } from '../../actions/app';
+import { notifySuccess } from '../../actions/app';
+import { ServerAPI } from '../../server';
+import useServerStatus from '../../hooks/use-server-status';
 
 const columns = [
   {
@@ -75,7 +75,7 @@ const AdminActions = ({ player }: TAdminActionsProps) => {
       confirmLabel: 'Ban',
       variant: 'danger',
       onConfirm: async () => {
-        await DesktopAPI.rcon.ban(player.uid);
+        await ServerAPI.rcon.ban(player.uid);
       }
     });
   };
@@ -87,7 +87,7 @@ const AdminActions = ({ player }: TAdminActionsProps) => {
       confirmLabel: 'Kick',
       variant: 'danger',
       onConfirm: async () => {
-        await DesktopAPI.rcon.kick(player.uid);
+        await ServerAPI.rcon.kick(player.uid);
       }
     });
   };
@@ -122,22 +122,28 @@ const AdminActions = ({ player }: TAdminActionsProps) => {
 };
 
 const Admin = () => {
+  const serverStatus = useServerStatus();
+  const hasLoadedFirst = useRef(false);
+  const intervalRef = useRef<NodeJS.Timeout>();
   const steamImages = useSteamImages();
   const serverConfig = useServerConfig();
-  const rconCredentials = useRconCredentials();
   const [isOnline, setIsOnline] = useState(false);
   const [info, setInfo] = useState<TRconInfo | undefined>();
   const [loading, setLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [host, setHost] = useState(rconCredentials.host);
-  const [password, setPassword] = useState(rconCredentials.password);
   const [rows, setRows] = useState<TGenericObject[]>([]);
   const [message, setMessage] = useState('');
+  const processedRows = useMemo(() => {
+    return rows.map((row) => ({
+      ...row,
+      image: steamImages[row.steamId]
+    })) as TRconPlayer[];
+  }, [rows, steamImages]);
 
   const loadInfo = async () => {
     setIsOnline(false);
 
-    const result = await DesktopAPI.rcon.getInfo();
+    const result = await ServerAPI.rcon.getInfo();
 
     if (result?.name) {
       setIsOnline(true);
@@ -152,7 +158,7 @@ const Admin = () => {
   const loadPlayers = async () => {
     setLoading(true);
 
-    const players = await DesktopAPI.rcon.getPlayers();
+    const players = await ServerAPI.rcon.getPlayers();
     const processedPlayers = players.map((player) => ({
       ...player,
       key: player.uid
@@ -163,14 +169,14 @@ const Admin = () => {
   };
 
   const onSendMessageClick = async () => {
-    await DesktopAPI.rcon.sendMessage(message);
+    await ServerAPI.rcon.sendMessage(message);
     setMessage('');
     notifySuccess('Message sent');
   };
 
   const onSaveClick = async () => {
     setIsSaving(true);
-    await DesktopAPI.rcon.save();
+    await ServerAPI.rcon.save();
     setIsSaving(false);
     notifySuccess('Save command executed');
   };
@@ -180,13 +186,24 @@ const Admin = () => {
     notifySuccess('Data refreshed');
   };
 
-  const onConnectClick = async () => {
-    setRconCredentials(host, password);
-    await loadInfo();
-  };
-
   useEffect(() => {
+    if (hasLoadedFirst.current) {
+      return;
+    } else {
+      hasLoadedFirst.current = true;
+    }
+
+    if (serverStatus !== ServerStatus.STARTED) return;
+
+    intervalRef.current = setInterval(() => loadInfo(), 60 * 1000); // 1 minute interval to refresh the data
+
     loadInfo();
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -208,35 +225,13 @@ const Admin = () => {
       }
       rightSlot={
         <div className="flex gap-2 w-full justify-center items-center">
-          {!serverConfig[ConfigKey.RCONEnabled] && host.startsWith('127') && (
+          {!serverConfig[ConfigKey.RCONEnabled] && (
             <div>
               <Tooltip content="RCON is disabled on the local server. Enable RCON on the server settings to use this section.">
                 <IconAlertCircle size="1.3rem" color="yellow" />
               </Tooltip>
             </div>
           )}
-          <Input
-            size="sm"
-            label="Host:RconPort"
-            value={host}
-            onChange={(event) => setHost(event.target.value)}
-          />
-          <Input
-            size="sm"
-            label="Rcon Password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <Tooltip content="Connect">
-            <Button
-              isIconOnly
-              variant="light"
-              size="sm"
-              onClick={onConnectClick}
-            >
-              <IconPlugConnected size="1.0rem" />
-            </Button>
-          </Tooltip>
         </div>
       }
     >
@@ -301,13 +296,13 @@ const Admin = () => {
           {(column) => <TableColumn {...column}>{column.label}</TableColumn>}
         </TableHeader>
         <TableBody
-          items={rows}
+          items={processedRows}
           isLoading={loading}
           loadingContent={<Spinner />}
           className="overflow-y-scroll"
         >
           {(item) => (
-            <TableRow key={item.key}>
+            <TableRow key={item.uid}>
               {(columnKey) => {
                 if (columnKey === 'actions') {
                   return (
@@ -318,11 +313,7 @@ const Admin = () => {
                 } else if (columnKey === 'image') {
                   return (
                     <TableCell>
-                      <img
-                        src={steamImages[item.steamId]}
-                        width="32px"
-                        height="32px"
-                      />
+                      <img src={item.image} width="32px" height="32px" />
                     </TableCell>
                   );
                 } else if (columnKey === 'steamId') {

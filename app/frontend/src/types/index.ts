@@ -6,6 +6,12 @@ export type TGenericObject = {
 
 export type TGenericFunction = (...args: any[]) => any;
 
+export enum TrackingEvent {
+  WINDOWS_APP_OPEN = 'windows_app_open',
+  WEB_APP_OPEN = 'web_app_open',
+  ERROR = 'error'
+}
+
 export enum Modal {
   ACTION_CONFIRMATION = 'ACTION_CONFIRMATION',
   VERSION_MISMATCH = 'VERSION_MISMATCH'
@@ -22,7 +28,7 @@ export enum ServerStatus {
 }
 
 export enum AppEvent {
-  RETURN_STEAM_IMAGE = 'RETURN_STEAM_IMAGE'
+  FALLBACK = 'FALLBACK'
 }
 
 export enum SocketAction {
@@ -46,7 +52,9 @@ export enum SocketAction {
   RESTORE_BACKUP = 'RESTORE_BACKUP',
   DOWNLOAD_BACKUP = 'DOWNLOAD_BACKUP',
   GET_BACKUPS_SETTINGS = 'GET_BACKUPS_SETTINGS',
-  SAVE_LAUNCH_PARAMS = 'SAVE_LAUNCH_PARAMS'
+  SAVE_LAUNCH_PARAMS = 'SAVE_LAUNCH_PARAMS',
+  GET_STEAM_AVATAR = 'GET_STEAM_AVATAR',
+  RCON_EXECUTE = 'RCON_EXECUTE'
 }
 
 export enum SocketEvent {

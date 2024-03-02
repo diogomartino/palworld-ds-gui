@@ -27,7 +27,11 @@ import {
 } from '@tabler/icons-react';
 import { requestConfirmation } from '../../actions/modal';
 import { TGenericObject } from '../../types';
-import { changeBackupSettings, notifySuccess } from '../../actions/app';
+import {
+  changeBackupSettings,
+  notifyError,
+  notifySuccess
+} from '../../actions/app';
 import { ServerAPI } from '../../server';
 import useBackupsList from '../../hooks/use-backups-list';
 import useBackupSettings from '../../hooks/use-backup-settings';
@@ -60,6 +64,7 @@ type TBackupActionsProps = {
 };
 
 const BackupActions = ({ backup }: TBackupActionsProps) => {
+  const [downloading, setDownloading] = useState<boolean>(false);
   const serverCredentials = useServerCredentials();
 
   const onRestoreClick = async () => {
@@ -87,14 +92,28 @@ const BackupActions = ({ backup }: TBackupActionsProps) => {
     });
   };
 
-  const onDownloadClick = () => {
-    DesktopAPI.downloadFile(
-      `http://${serverCredentials.host}/backups/${backup.originalName}`,
-      backup.originalName,
-      serverCredentials.apiKey
-    );
+  const onDownloadClick = async () => {
+    setDownloading(true);
 
-    notifySuccess('Backup download started.');
+    const sleep = (ms: number) =>
+      new Promise((resolve) => setTimeout(resolve, ms));
+
+    try {
+      notifySuccess('Backup download started.');
+
+      await sleep(5000);
+
+      await DesktopAPI.downloadFile(
+        `http://${serverCredentials.host}/backups/${backup.originalName}`,
+        backup.originalName,
+        serverCredentials.apiKey
+      );
+    } catch (error) {
+      DesktopAPI.logToFile(`Backup download failed: ${error?.toString()}`);
+      notifyError('Backup download failed.');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   return (
@@ -109,8 +128,9 @@ const BackupActions = ({ backup }: TBackupActionsProps) => {
           key="download"
           endContent={<IconRestore size="1.0rem" />}
           onClick={onDownloadClick}
+          isDisabled={downloading}
         >
-          Download
+          {downloading ? 'A download is in progress...' : 'Download'}
         </DropdownItem>
         <DropdownItem
           key="restore"

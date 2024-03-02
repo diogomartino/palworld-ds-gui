@@ -120,6 +120,10 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			GetBackupsConfigHandler(conn, p)
 		case saveLaunchParamsEvent:
 			SaveLaunchParamsHandler(conn, p)
+		case getSteamAvatarEvent:
+			GetSteamAvatarHandler(conn, p)
+		case rconExecHandlerEvent:
+			RconExecHandlerHandler(conn, p)
 		default:
 			utils.LogToFile(fmt.Sprintf("Unknown event: %s", message.Event), true)
 		}
