@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react';
 import { DesktopAPI } from '../desktop';
-import { AppEvent, TGenericFunction } from '../types';
-import { addSteamImage, checkForUpdates } from '../actions/app';
+import { checkForUpdates } from '../actions/app';
+import { isWeb } from '../helpers/is-web';
+import { trackWebAppOpen, trackWindowsAppOpen } from '../helpers/tracker';
 
-const CHECK_FOR_UPDATES_INTERVAL = 1000 * 60 * 60 * 24; // 1 day
+const CHECK_FOR_UPDATES_INTERVAL = 1000 * 60 * 60 * 1; // 1 hour
 
 const useEventsInit = () => {
-  const hasInit = useRef(false);
+  const hasInit = useRef(isWeb() ? true : false);
+  const hasTrackerInited = useRef(false);
 
   useEffect(() => {
     if (!hasInit.current) {
@@ -22,21 +24,15 @@ const useEventsInit = () => {
   }, []);
 
   useEffect(() => {
-    const unsubscribes: TGenericFunction[] = [];
+    if (hasTrackerInited.current) return;
 
-    DesktopAPI.onAppEvent(
-      AppEvent.RETURN_STEAM_IMAGE,
-      (resultString: string) => {
-        const [steamId, imageUrl] = resultString.split('|');
+    if (isWeb()) {
+      trackWebAppOpen();
+    } else {
+      trackWindowsAppOpen();
+    }
 
-        addSteamImage(steamId, imageUrl);
-      },
-      unsubscribes
-    );
-
-    return () => {
-      unsubscribes.forEach((unsubscribe) => unsubscribe());
-    };
+    hasTrackerInited.current = true;
   }, []);
 };
 

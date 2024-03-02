@@ -6,24 +6,19 @@ import (
 	"io"
 	"net/http"
 	"os"
-	rconclient "palword-ds-gui/rcon-client"
 	"palword-ds-gui/utils"
 	"path"
 
-	"github.com/gocolly/colly/v2"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 type App struct {
 	ctx        context.Context
-	rconClient *rconclient.RconClient
 	reactReady bool
 }
 
-func NewApp(rconClient *rconclient.RconClient) *App {
-	return &App{
-		rconClient: rconClient,
-	}
+func NewApp() *App {
+	return &App{}
 }
 
 func (a *App) startup(ctx context.Context) {
@@ -58,24 +53,6 @@ func (a *App) shutdown(ctx context.Context) {
 
 func (a *App) OpenInBrowser(url string) {
 	runtime.BrowserOpenURL(a.ctx, url)
-}
-
-func (a *App) GetSteamProfileURL(steamid string) {
-	profileURL := fmt.Sprintf("https://steamcommunity.com/profiles/%s", steamid)
-	c := colly.NewCollector()
-
-	var profileImageURL string
-
-	c.OnHTML(".playerAvatarAutoSizeInner > img", func(e *colly.HTMLElement) {
-		profileImageURL = e.Attr("src")
-		runtime.EventsEmit(a.ctx, "RETURN_STEAM_IMAGE", fmt.Sprintf("%s|%s", steamid, profileImageURL))
-	})
-
-	err := c.Visit(profileURL)
-
-	if err != nil {
-		return
-	}
 }
 
 func (a *App) SaveLog(log string) {

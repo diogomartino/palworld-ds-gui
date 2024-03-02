@@ -3,8 +3,6 @@
 
 export function DownloadFile(arg1:string,arg2:string,arg3:string):Promise<void>;
 
-export function GetSteamProfileURL(arg1:string):Promise<void>;
-
 export function InitApp():Promise<void>;
 
 export function OpenInBrowser(arg1:string):Promise<void>;

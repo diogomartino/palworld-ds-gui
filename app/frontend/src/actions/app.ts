@@ -1,8 +1,7 @@
 import { appSliceActions } from '../store/app-slice';
 import { store } from '../store';
 import { TSettings } from '../types';
-import { DesktopAPI } from '../desktop';
-import { settingsSelector, steamImagesCacheSelector } from '../selectors/app';
+import { settingsSelector } from '../selectors/app';
 import { ServerAPI } from '../server';
 import { serverSliceActions } from '../store/server-slice';
 import { toast } from 'react-toastify';
@@ -13,10 +12,6 @@ export const toggleTheme = () => {
 
 export const setLaunchParams = (launchParams: string) => {
   store.dispatch(appSliceActions.setLaunchParams(launchParams ?? ''));
-};
-
-export const setRconCredentials = (host: string, password: string) => {
-  store.dispatch(appSliceActions.setRconCredentials({ host, password }));
 };
 
 export const setServerCredentials = (host: string, apiKey: string) => {
@@ -95,17 +90,6 @@ export const checkForUpdates = async () => {
 
 export const addSteamImage = (steamId: string, imageUrl: string) => {
   store.dispatch(appSliceActions.addSteamImage({ steamId, imageUrl }));
-};
-
-export const cacheSteamImage = async (steamId: string) => {
-  const state = store.getState();
-  const steamCache = steamImagesCacheSelector(state);
-
-  if (steamCache[steamId]) {
-    return;
-  }
-
-  DesktopAPI.getProfileImageURL(steamId);
 };
 
 export const notifyError = (message: string) => {

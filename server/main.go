@@ -12,6 +12,7 @@ var (
 	servermanager       *ServerManager
 	backupmanager       *BackupManager
 	timedrestartmanager *TimedRestartManager
+	rconclient          *RconClient
 	api                 *Api
 )
 
@@ -37,6 +38,9 @@ func main() {
 
 	timedrestartmanager = NewTimedRestartManager()
 	timedrestartmanager.Init()
+
+	rconclient = NewRconClient()
+	rconclient.Init()
 
 	api = NewApi()
 	api.Init()

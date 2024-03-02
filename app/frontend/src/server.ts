@@ -3,7 +3,7 @@ import { parseConfig, serializeConfig } from './helpers/config-parser';
 import { setConfig, setSaveName } from './actions/server';
 import { ConfigKey, TConfig } from './types/server-config';
 import { store } from './store';
-import { notifyError, notifySuccess, setRconCredentials } from './actions/app';
+import { addSteamImage, notifyError, notifySuccess } from './actions/app';
 import { socketStateSelector } from './selectors/socket';
 import {
   onBackupListUpdated,
@@ -11,6 +11,8 @@ import {
   onClientInited
 } from './actions/socket';
 import { DesktopAPI } from './desktop';
+import { RconCommand, TRconInfo, TRconPlayer } from './types/rcon';
+import { serverConfigSelector } from './selectors/server';
 
 const TIMEOUT_MS = 10000;
 
@@ -76,10 +78,6 @@ export const ServerAPI = {
     const config = parseConfig(configString);
 
     setConfig(config);
-    setRconCredentials(
-      `127.0.0.1:${config[ConfigKey.RCONPort]}`,
-      config[ConfigKey.AdminPassword]
-    );
   },
   writeConfig: async (config: TConfig) => {
     try {
@@ -87,8 +85,6 @@ export const ServerAPI = {
       await ServerAPI.send(SocketAction.WRITE_CONFIG, {
         config: serializedConfig
       });
-
-      notifySuccess('Config saved');
     } catch {
       notifyError('Could not save config');
     }
@@ -103,7 +99,6 @@ export const ServerAPI = {
   writeSaveName: async (saveName: string) => {
     try {
       await ServerAPI.send(SocketAction.WRITE_SAVE_NAME, { saveName });
-      notifySuccess('Save name saved');
     } catch {
       notifyError('Could not save save name');
     }
@@ -131,6 +126,18 @@ export const ServerAPI = {
       notifySuccess('Launch params saved');
     } catch {
       notifyError('Could not save launch params');
+    }
+  },
+  utils: {
+    getProfileAvatarURL: async (steamID64: string) => {
+      const { data: avatarUrl } = await ServerAPI.send(
+        SocketAction.GET_STEAM_AVATAR,
+        {
+          steamID64
+        }
+      );
+
+      addSteamImage(steamID64, avatarUrl);
     }
   },
   timedRestart: {
@@ -206,6 +213,97 @@ export const ServerAPI = {
       } catch {
         notifyError('Could not restore backup');
       }
+    }
+  },
+  rcon: {
+    execute: async (command: string) => {
+      const state = store.getState();
+      const serverConfig = serverConfigSelector(state);
+
+      const { data: result } = await ServerAPI.send(SocketAction.RCON_EXECUTE, {
+        hostname: `127.0.0.1:${serverConfig[ConfigKey.RCONPort]}`,
+        password: serverConfig[ConfigKey.AdminPassword],
+        command
+      });
+
+      return (result ?? '').trim();
+    },
+    getInfo: async (): Promise<TRconInfo | undefined> => {
+      try {
+        const result = (
+          (await ServerAPI.rcon.execute(RconCommand.INFO)) || ''
+        ).trim();
+
+        const regex = /Welcome to Pal Server\[(.*?)\]\s*(.*)/;
+        const match = result.match(regex);
+        const [, version, name] = match || [];
+
+        return {
+          version,
+          name
+        };
+      } catch (err) {
+        //
+        console.error('! getInfo error', err);
+      }
+
+      return undefined;
+    },
+    getPlayers: async (): Promise<TRconPlayer[]> => {
+      try {
+        const result = (
+          (await ServerAPI.rcon.execute(RconCommand.SHOW_PLAYERS)) || ''
+        ).trim();
+
+        const lines = result.split('\n');
+
+        lines.shift(); // remove the first line which is the header
+
+        const players = lines.map((line) => {
+          const [name, uid, steamId] = line.split(',').map((s) => s.trim());
+          const player: TRconPlayer = {
+            name,
+            uid,
+            steamId
+          };
+
+          ServerAPI.utils.getProfileAvatarURL(steamId); // crawl steam profile image and cache the url in the store so we don't have to do it again for the same player
+
+          return player;
+        });
+
+        return players;
+      } catch {
+        //
+      }
+
+      return [];
+    },
+    save: async () => {
+      await ServerAPI.rcon.execute(RconCommand.SAVE);
+    },
+    shutdown: async (
+      message: string = 'Server is being shutdown',
+      seconds?: number
+    ) => {
+      const command = `${RconCommand.SHUTDOWN} ${seconds ?? 1} ${message}`;
+
+      await ServerAPI.rcon.execute(command);
+    },
+    sendMessage: async (messages: string) => {
+      const command = `${RconCommand.BROADCAST} ${messages}`;
+
+      await ServerAPI.rcon.execute(command);
+    },
+    ban: async (uid: string) => {
+      const command = `${RconCommand.BAN} ${uid}`;
+
+      await ServerAPI.rcon.execute(command);
+    },
+    kick: async (uid: string) => {
+      const command = `${RconCommand.KICK} ${uid}`;
+
+      await ServerAPI.rcon.execute(command);
     }
   }
 };

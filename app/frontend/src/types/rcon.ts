@@ -7,6 +7,7 @@ export type TRconPlayer = {
   name: string;
   uid: string;
   steamId: string;
+  image?: string;
 };
 
 export enum RconCommand {

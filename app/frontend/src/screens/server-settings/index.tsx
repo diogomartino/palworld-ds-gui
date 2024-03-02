@@ -70,7 +70,7 @@ const ServerSettings = () => {
     }
 
     setIsSaving(false);
-    notifySuccess('Server settings saved');
+    notifySuccess('Game settings saved');
   };
 
   useEffect(() => {

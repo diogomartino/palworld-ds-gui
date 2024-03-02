@@ -19,10 +19,6 @@ export interface IAppState {
   settings: TSettings;
   latestVersion: string;
   steamImagesCache: TSteamImageMap;
-  rconCredentials: {
-    host: string;
-    password: string;
-  };
   socket: WebSocket | undefined;
   launchParams: string;
 }
@@ -32,10 +28,6 @@ const initialState: IAppState = {
   settings: getStoredSettings(),
   latestVersion: APP_VERSION,
   steamImagesCache: {},
-  rconCredentials: {
-    host: '',
-    password: ''
-  },
   launchParams: ''
 };
 
@@ -62,9 +54,6 @@ export const appSlice = createSlice({
     },
     setLaunchParams: (state, action) => {
       state.launchParams = action.payload;
-    },
-    setRconCredentials: (state, action) => {
-      state.rconCredentials = action.payload;
     },
     setSocket: (state, action) => {
       state.socket = action.payload;

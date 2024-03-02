@@ -19,19 +19,26 @@ If you already have a Palworld server, you can still use this tool, you just nee
 ```plaintext
 SomeRandomFolder/
 ├── server/ <------- This is your existing server folder (the one with the **PalServer.exe** executable)
-├── PalworldDSGUI_Server.ex
+├── PalworldDSGUI_Server.exe
 ```
 
-The `server` folder should contain the `PalServer.exe` executable and all the other files that come with the server. The `PalworldDSGUI_Server.exe` should be in the same folder as the `server` folder. Then you can run the `PalworldDSGUI_Server.exe` and it will detect the existing server.
+The `server` folder should contain the `PalServer.exe` executable and all the other files that come with the server. The `PalworldDSGUI_Server.exe` should be in the same folder as the `server` folder. Then you can run the `PalworldDSGUI_Server.exe` and it will detect the existing server. If you want to use a different folder name, you can use the `-serverpath` parameter to specify the folder name.
 
 ## GUI server parameters
 
-| Param    | Description               | Default |
-| -------- | ------------------------- | ------- |
-| -newkey  | Generate a new API key    |
-| -showkey | Show the current API key  |
-| -help    | Show help                 |
-| -port    | Port to run the server on | 21577   |
+| Param       | Description                        | Default |
+| ----------- | ---------------------------------- | ------- |
+| -newkey     | Generate a new API key             |
+| -showkey    | Show the current API key           |
+| -help       | Show help                          |
+| -port       | Port to run the server on          | 21577   |
+| -serverpath | Path to the PalWorld server folder | server  |
+
+To use the parameters, you need to open a command prompt and navigate to the folder where the `PalworldDSGUI_Server.exe` is located. Then you can run the executable with the parameters you want. For example, to run the server on port 12345 and with a custom server folder, you can run the following command:
+
+```plaintext
+PalworldDSGUI_Server.exe -port 12345 -serverpath PalServer
+```
 
 ## Running the server on Linux
 

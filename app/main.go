@@ -6,7 +6,6 @@ package main
 import (
 	"embed"
 	"os"
-	rconclient "palword-ds-gui/rcon-client"
 	"palword-ds-gui/utils"
 
 	"github.com/tidwall/gjson"
@@ -43,8 +42,7 @@ func main() {
 	version := gjson.Get(wailsJSON, "info.productVersion")
 	utils.LogToFile("main.go: main() - Palword Dedicated Server GUI v" + version.String())
 
-	rconClient := rconclient.NewRconClient()
-	app := NewApp(rconClient)
+	app := NewApp()
 
 	utils.LogToFile("main.go: main() - Managers created")
 
@@ -75,7 +73,6 @@ func main() {
 		WindowStartState: options.Normal,
 		Bind: []interface{}{
 			app,
-			rconClient,
 		},
 		Windows: &windows.Options{
 			WebviewIsTransparent: false,

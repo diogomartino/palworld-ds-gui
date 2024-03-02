@@ -10,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import { DesktopAPI } from '../../desktop';
 import { requestConfirmation } from '../../actions/modal';
+import { isWeb } from '../../helpers/is-web';
 
 const AppSettings = () => {
   const theme = useSelectedTheme();
@@ -44,14 +45,16 @@ const AppSettings = () => {
           Change to {theme === 'light' ? 'dark' : 'light'} theme
         </Button>
 
-        <Button
-          onClick={DesktopAPI.openLogFile}
-          variant="shadow"
-          color="secondary"
-          endContent={<IconWriting size="1.0rem" />}
-        >
-          Open Logs Folder
-        </Button>
+        {!isWeb() && (
+          <Button
+            onClick={DesktopAPI.openLogFile}
+            variant="shadow"
+            color="secondary"
+            endContent={<IconWriting size="1.0rem" />}
+          >
+            Open Logs Folder
+          </Button>
+        )}
 
         <Button
           onClick={onClearCacheClick}

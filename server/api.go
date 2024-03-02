@@ -49,9 +49,16 @@ func (a *Api) Init() {
 
 	http.HandleFunc("/ws", handleWebSocket)
 	http.HandleFunc("/backups/", func(w http.ResponseWriter, r *http.Request) {
-		apiKey := r.Header.Get("Authorization")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET")
+		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization")
 
-		fmt.Printf("API Key: %s\n", apiKey)
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		apiKey := r.Header.Get("Authorization")
 
 		if apiKey != utils.Settings.General.APIKey {
 			utils.Log(fmt.Sprintf("Unauthorized backup download from %s", r.RemoteAddr))
