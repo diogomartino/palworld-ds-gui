@@ -5,7 +5,8 @@ const getUmami = () => {
 };
 
 export const trackEvent = (event: TrackingEvent, data?: TGenericObject) => {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction =
+    process.env.NODE_ENV === 'production' || !!process.env.VERCEL_ENV;
 
   // don't track events in development
   if (!isProduction) return;
