@@ -11,10 +11,9 @@ import (
 )
 
 type ServerManager struct {
-	cmd          *exec.Cmd
-	serverCmd    *exec.Cmd
-	serverPid    int
-	launchParams []string
+	cmd       *exec.Cmd
+	serverCmd *exec.Cmd
+	serverPid int
 }
 
 func NewServerManager() *ServerManager {
@@ -106,7 +105,7 @@ func (s *ServerManager) MonitorServerProcess() {
 func (s *ServerManager) Start() error {
 	utils.Log("Starting dedicated server...")
 
-	s.serverCmd = exec.Command(utils.Config.ServerExe, s.launchParams...)
+	s.serverCmd = exec.Command(utils.Config.ServerExe, utils.Settings.General.LaunchParams)
 	s.serverCmd.Dir = utils.Config.ServerPath
 	s.serverCmd.Stdout = os.Stdout
 	s.serverCmd.Stderr = os.Stderr
