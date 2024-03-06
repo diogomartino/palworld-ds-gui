@@ -105,7 +105,6 @@ func (s *ServerManager) MonitorServerProcess() {
 
 func (s *ServerManager) Start() error {
 	utils.Log("Starting dedicated server...")
-	println(utils.Settings.General.LaunchParams)
 
 	launchParamsSlice := strings.Split(utils.Settings.General.LaunchParams, " ")
 
