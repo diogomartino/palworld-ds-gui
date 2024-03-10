@@ -5,7 +5,7 @@
 3. Run the executable.
 4. Wait until the server is downloaded from the Steam servers.
 5. An API key will be shown on the console. Save it, you will need it to connect to the server.
-6. Download the **GUI Client** `PalworldDSGui.exe` from the [releases page](https://github.com/diogomartino/palworld-ds-gui/releases).
+6. Download the **GUI Client** `PalworldDSGui.exe` from the [releases page](https://github.com/diogomartino/palworld-ds-gui/releases) OR use the web version at [https://app.palgui.com/](https://app.palgui.com/).
 7. Open the client and use the API key to connect to the server.
 
 ## Remote Server
