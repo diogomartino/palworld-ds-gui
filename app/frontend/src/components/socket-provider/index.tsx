@@ -2,13 +2,13 @@ import { createContext } from 'react';
 import {
   clearSocket,
   onAddConsoleEntry,
+  onAdditionalSettingsUpdated,
   onBackupListUpdated,
   onBackupSettingsUpdated,
   onLaunchParamsChanged,
   onServerConfigChanged,
   onServerSaveNameChanged,
   onServerStatusChanged,
-  onTimedRestartSettingsUpdated,
   setSocket,
   setSocketConnecting,
   setSocketError
@@ -93,8 +93,8 @@ const SocketProvider = ({ children }: TSocketProviderProps) => {
           case SocketEvent.BACKUP_SETTINGS_CHANGED:
             onBackupSettingsUpdated(message.data);
             break;
-          case SocketEvent.TIMED_RESTART_SETTINGS_CHANGED:
-            onTimedRestartSettingsUpdated(message.data);
+          case SocketEvent.ADDITIONAL_SETTINGS_CHANGED:
+            onAdditionalSettingsUpdated(message.data);
             break;
           case SocketEvent.LAUNCH_PARAMS_CHANGED:
             onLaunchParamsChanged(message.data);

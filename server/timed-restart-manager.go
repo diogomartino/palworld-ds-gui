@@ -27,12 +27,11 @@ func (t *TimedRestartManager) Init() {
 }
 
 func (t *TimedRestartManager) Start(interval float32) {
+	if t.cron != nil {
+		return
+	}
+
 	utils.Log(fmt.Sprintf("Restarting server every %.2f hours", interval))
-
-	utils.Settings.TimedRestart.Enabled = true
-	utils.Settings.TimedRestart.Interval = float32(interval)
-	utils.SaveSettings()
-
 	cronString := fmt.Sprintf("@every %.2fh", interval)
 
 	if t.cron != nil {
@@ -54,13 +53,14 @@ func (t *TimedRestartManager) Start(interval float32) {
 }
 
 func (t *TimedRestartManager) Stop() {
-	if t.cron != nil {
-		utils.Log("Timed restart stopped")
-		t.cron.Stop()
-
-		utils.Settings.TimedRestart.Enabled = false
-		utils.SaveSettings()
+	if t.cron == nil {
+		return
 	}
+
+	utils.Log("Timed restart stopped")
+	t.cron.Stop()
+
+	t.cron = nil
 }
 
 func (t *TimedRestartManager) Dispose() {

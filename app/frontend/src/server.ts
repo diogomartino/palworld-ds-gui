@@ -1,4 +1,4 @@
-import { SocketAction, TGenericObject } from './types';
+import { SocketAction, TAdditionalSettings, TGenericObject } from './types';
 import { parseConfig, serializeConfig } from './helpers/config-parser';
 import { setConfig, setSaveName } from './actions/server';
 import { ConfigKey, TConfig } from './types/server-config';
@@ -60,7 +60,7 @@ export const ServerAPI = {
 
         timeoutId = setTimeout(() => {
           socket.removeEventListener('message', onMessage);
-          reject(new Error('Request timed out'));
+          reject(new Error(`Request timed out for event: ${event}`));
         }, TIMEOUT_MS);
 
         socket.addEventListener('message', onMessage);
@@ -104,16 +104,16 @@ export const ServerAPI = {
     }
   },
   start: async () => {
-    ServerAPI.send(SocketAction.START_SERVER);
+    ServerAPI.send(SocketAction.START_SERVER, undefined, false);
   },
   stop: () => {
-    ServerAPI.send(SocketAction.STOP_SERVER);
+    ServerAPI.send(SocketAction.STOP_SERVER, undefined, false);
   },
   restart: () => {
-    ServerAPI.send(SocketAction.RESTART_SERVER);
+    ServerAPI.send(SocketAction.RESTART_SERVER, undefined, false);
   },
   update: () => {
-    ServerAPI.send(SocketAction.UPDATE_SERVER);
+    ServerAPI.send(SocketAction.UPDATE_SERVER, undefined, false);
   },
   init: async () => {
     const { data } = await ServerAPI.send(SocketAction.INIT);
@@ -128,6 +128,17 @@ export const ServerAPI = {
       notifyError('Could not save launch params');
     }
   },
+  saveAdditionalSettings: async (newSettings: TAdditionalSettings) => {
+    try {
+      await ServerAPI.send(SocketAction.SAVE_ADDITIONAL_SETTINGS, {
+        newSettings
+      });
+
+      notifySuccess('Additional settings saved');
+    } catch {
+      notifyError('Could not save additional settings');
+    }
+  },
   utils: {
     getProfileAvatarURL: async (steamID64: string) => {
       const { data: avatarUrl } = await ServerAPI.send(
@@ -140,26 +151,6 @@ export const ServerAPI = {
       addSteamImage(steamID64, avatarUrl);
     }
   },
-  timedRestart: {
-    start: async (interval: number) => {
-      try {
-        await ServerAPI.send(SocketAction.START_TIMED_RESTART, {
-          interval
-        });
-        notifySuccess('Timed restart is now enabled');
-      } catch (error) {
-        notifyError('Could not start timed restart');
-      }
-    },
-    stop: async () => {
-      try {
-        await ServerAPI.send(SocketAction.STOP_TIMED_RESTART);
-        notifySuccess('Timed restart is now disabled');
-      } catch {
-        notifyError('Could not stop timed restart');
-      }
-    }
-  },
   backups: {
     start: async (interval: number, keepCount: number) => {
       try {
@@ -168,7 +159,7 @@ export const ServerAPI = {
           keepCount
         });
         notifySuccess('Backups are now enabled');
-      } catch (error) {
+      } catch {
         notifyError('Could not start backups');
       }
     },

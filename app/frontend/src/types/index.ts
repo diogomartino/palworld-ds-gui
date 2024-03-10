@@ -14,7 +14,8 @@ export enum TrackingEvent {
 
 export enum Modal {
   ACTION_CONFIRMATION = 'ACTION_CONFIRMATION',
-  VERSION_MISMATCH = 'VERSION_MISMATCH'
+  VERSION_MISMATCH = 'VERSION_MISMATCH',
+  EXEC_RCON_COMMAND = 'EXEC_RCON_COMMAND'
 }
 
 export enum ServerStatus {
@@ -43,8 +44,6 @@ export enum SocketAction {
   WRITE_SAVE_NAME = 'WRITE_SAVE_NAME',
   START_BACKUPS = 'START_BACKUPS',
   STOP_BACKUPS = 'STOP_BACKUPS',
-  START_TIMED_RESTART = 'START_TIMED_RESTART',
-  STOP_TIMED_RESTART = 'STOP_TIMED_RESTART',
   GET_BACKUPS_LIST = 'GET_BACKUPS_LIST',
   DELETE_BACKUP = 'DELETE_BACKUP',
   CREATE_BACKUP = 'CREATE_BACKUP',
@@ -54,7 +53,8 @@ export enum SocketAction {
   GET_BACKUPS_SETTINGS = 'GET_BACKUPS_SETTINGS',
   SAVE_LAUNCH_PARAMS = 'SAVE_LAUNCH_PARAMS',
   GET_STEAM_AVATAR = 'GET_STEAM_AVATAR',
-  RCON_EXECUTE = 'RCON_EXECUTE'
+  RCON_EXECUTE = 'RCON_EXECUTE',
+  SAVE_ADDITIONAL_SETTINGS = 'SAVE_ADDITIONAL_SETTINGS'
 }
 
 export enum SocketEvent {
@@ -63,7 +63,7 @@ export enum SocketEvent {
   SERVER_SAVE_NAME_CHANGED = 'SERVER_SAVE_NAME_CHANGED',
   BACKUP_LIST_CHANGED = 'BACKUP_LIST_CHANGED',
   BACKUP_SETTINGS_CHANGED = 'BACKUP_SETTINGS_CHANGED',
-  TIMED_RESTART_SETTINGS_CHANGED = 'TIMED_RESTART_SETTINGS_CHANGED',
+  ADDITIONAL_SETTINGS_CHANGED = 'ADDITIONAL_SETTINGS_CHANGED',
   LAUNCH_PARAMS_CHANGED = 'LAUNCH_PARAMS_CHANGED',
   CUSTOM_ERROR = 'CUSTOM_ERROR',
   ADD_CONSOLE_ENTRY = 'ADD_CONSOLE_ENTRY'
@@ -77,13 +77,22 @@ export type TConsoleEntry = {
 
 export type TBackupSettings = {
   enabled: boolean;
-  intervalHours: number;
+  interval: number;
   keepCount: number;
 };
 
 export type TTimedRestartSettings = {
   enabled: boolean;
-  intervalHours: number;
+  interval: number;
+};
+
+export type TRestartOnCrashSettings = {
+  enabled: boolean;
+};
+
+export type TAdditionalSettings = {
+  timedRestart: TTimedRestartSettings;
+  restartOnCrash: TRestartOnCrashSettings;
 };
 
 export type TServerCredentials = {
@@ -97,7 +106,7 @@ export type TClientInitedData = {
   currentConfig: string;
   currentSaveName: string;
   currentBackupsSettings: TBackupSettings;
-  currentTimedRestartSettings: TTimedRestartSettings;
+  currentAdditionalSettings: TAdditionalSettings;
   currentBackupsList: TBackup[];
   serverVersion: string;
 };
