@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"palworld-ds-gui-server/utils"
+	"strings"
 	"time"
 
 	"github.com/mitchellh/go-ps"
@@ -105,7 +106,9 @@ func (s *ServerManager) MonitorServerProcess() {
 func (s *ServerManager) Start() error {
 	utils.Log("Starting dedicated server...")
 
-	s.serverCmd = exec.Command(utils.Config.ServerExe, utils.Settings.General.LaunchParams)
+	launchParamsSlice := strings.Split(utils.Settings.General.LaunchParams, " ")
+
+	s.serverCmd = exec.Command(utils.Config.ServerExe, launchParamsSlice...)
 	s.serverCmd.Dir = utils.Config.ServerPath
 	s.serverCmd.Stdout = os.Stdout
 	s.serverCmd.Stderr = os.Stderr
