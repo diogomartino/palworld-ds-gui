@@ -2,6 +2,8 @@
 
 This is a GUI for the Palworld Dedicated Server. Configure and manage your remote/local server visually. Control your server from anywhere with the web interface.
 
+## [How To Use - Click here](HOW_TO_USE.md)
+
 ## Web Interface
 
 You can either download the Windows app or use the web interface at:
@@ -13,8 +15,6 @@ You can either download the Windows app or use the web interface at:
 You can downloads the latest versions from the [releases page](https://github.com/diogomartino/palworld-ds-gui/releases).
 
 [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/) is required. You most likely already have it installed, so you don't need to worry.
-
-### [How To Use - Click here](HOW_TO_USE.md)
 
 > [!WARNING]  
 > Be aware that this software is still in early development and may contain bugs. Please report any issues you find.
