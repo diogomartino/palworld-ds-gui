@@ -68,15 +68,20 @@ type PersistedTimedRestart struct {
 	Interval float32 `ini:"interval"`
 }
 
+type PersistedRestartOnCrash struct {
+	Enabled bool `ini:"enabled"`
+}
+
 type PersistedSettingsGeneral struct {
 	APIKey       string `ini:"apiKey"`
 	LaunchParams string `ini:"launchParams"`
 }
 
 type PersistedSettings struct {
-	General      PersistedSettingsGeneral
-	Backup       PersistedSettingsBackup
-	TimedRestart PersistedTimedRestart
+	General        PersistedSettingsGeneral
+	Backup         PersistedSettingsBackup
+	TimedRestart   PersistedTimedRestart
+	RestartOnCrash PersistedRestartOnCrash
 }
 
 var Settings PersistedSettings = PersistedSettings{
@@ -92,6 +97,9 @@ var Settings PersistedSettings = PersistedSettings{
 	TimedRestart: PersistedTimedRestart{
 		Enabled:  false,
 		Interval: 4,
+	},
+	RestartOnCrash: PersistedRestartOnCrash{
+		Enabled: false,
 	},
 }
 
@@ -163,20 +171,23 @@ func InitWindowsConfigs() {
 	Config.SteamCmdUrl = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
 }
 
+var sections = map[string]interface{}{
+	"General":        &Settings.General,
+	"Backup":         &Settings.Backup,
+	"TimedRestart":   &Settings.TimedRestart,
+	"RestartOnCrash": &Settings.RestartOnCrash,
+}
+
 func LoadSettings() error {
 	cfg, err := ini.Load(Config.PersistedSettingsPath)
 	if err != nil {
 		return fmt.Errorf("failed to read file: %v", err)
 	}
 
-	if err = cfg.Section("General").MapTo(&Settings.General); err != nil {
-		return fmt.Errorf("failed to map General section: %v", err)
-	}
-	if err = cfg.Section("Backup").MapTo(&Settings.Backup); err != nil {
-		return fmt.Errorf("failed to map Backup section: %v", err)
-	}
-	if err = cfg.Section("TimedRestart").MapTo(&Settings.TimedRestart); err != nil {
-		return fmt.Errorf("failed to map TimedRestart section: %v", err)
+	for section, settings := range sections {
+		if err = cfg.Section(section).MapTo(settings); err != nil {
+			return fmt.Errorf("failed to map %s section: %v", section, err)
+		}
 	}
 
 	return nil
@@ -185,14 +196,10 @@ func LoadSettings() error {
 func SaveSettings() error {
 	cfg := ini.Empty()
 
-	if err := cfg.Section("General").ReflectFrom(&Settings.General); err != nil {
-		return fmt.Errorf("failed to reflect General section: %v", err)
-	}
-	if err := cfg.Section("Backup").ReflectFrom(&Settings.Backup); err != nil {
-		return fmt.Errorf("failed to reflect Backup section: %v", err)
-	}
-	if err := cfg.Section("TimedRestart").ReflectFrom(&Settings.TimedRestart); err != nil {
-		return fmt.Errorf("failed to reflect TimedRestart section: %v", err)
+	for section, settings := range sections {
+		if err := cfg.Section(section).ReflectFrom(settings); err != nil {
+			return fmt.Errorf("failed to reflect %s section: %v", section, err)
+		}
 	}
 
 	if err := cfg.SaveTo(Config.PersistedSettingsPath); err != nil {

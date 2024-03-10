@@ -97,6 +97,16 @@ func (s *ServerManager) MonitorServerProcess() {
 		if proc == nil || err != nil {
 			utils.Log("Server seems to have stopped (crashed?)")
 			EmitServerStatus("STOPPED", nil)
+
+			if utils.Settings.RestartOnCrash.Enabled {
+				utils.Log("Restart on crash is enabled, attempting to restart...")
+
+				err := s.Start()
+				if err == nil {
+					EmitServerStatus("STARTED", nil)
+				}
+			}
+
 			break
 		}
 	}

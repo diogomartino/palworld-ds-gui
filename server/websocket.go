@@ -104,10 +104,6 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			StartBackupsHandler(conn, p)
 		case stopBackupsEvent:
 			StopBackupsHandler(conn, p)
-		case startTimedRestartEvent:
-			StartTimedRestartHandler(conn, p)
-		case stopTimedRestartEvent:
-			StopTimedRestartHandler(conn, p)
 		case createBackupEvent:
 			CreateBackupHandler(conn, p)
 		case getBackupsEvent:
@@ -124,6 +120,8 @@ func handleWebSocket(w http.ResponseWriter, r *http.Request) {
 			GetSteamAvatarHandler(conn, p)
 		case rconExecHandlerEvent:
 			RconExecHandlerHandler(conn, p)
+		case saveAdditionalSettingsEvent:
+			SaveAdditionalSettingsHandler(conn, p)
 		default:
 			utils.LogToFile(fmt.Sprintf("Unknown event: %s", message.Event), true)
 		}
@@ -177,17 +175,18 @@ func EmitBackupSettings(exclude *websocket.Conn) {
 	}, exclude)
 }
 
-func EmitTimedRestartSettings(exclude *websocket.Conn) {
+func EmitAdditionalSettings(exclude *websocket.Conn) {
+
 	type TimedRestartSettingsResponse struct {
-		Event   string                      `json:"event"`
-		Success bool                        `json:"success"`
-		Data    utils.PersistedTimedRestart `json:"data"`
+		Event   string             `json:"event"`
+		Success bool               `json:"success"`
+		Data    AdditionalSettings `json:"data"`
 	}
 
 	BroadcastJSON(TimedRestartSettingsResponse{
-		Event:   "TIMED_RESTART_SETTINGS_CHANGED",
+		Event:   "ADDITIONAL_SETTINGS_CHANGED",
 		Success: true,
-		Data:    utils.Settings.TimedRestart,
+		Data:    AdditionalSettings{utils.Settings.TimedRestart, utils.Settings.RestartOnCrash},
 	}, exclude)
 }
 

@@ -13,5 +13,5 @@ export const serverBackupsListSelector = (state: IRootState) =>
 export const backupSetingsSelector = (state: IRootState) =>
   state.server.backupSettings;
 
-export const timedRestartSettingsSelector = (state: IRootState) =>
-  state.server.timedRestartSettings;
+export const additionalSettingsSelector = (state: IRootState) =>
+  state.server.additionalSettings;

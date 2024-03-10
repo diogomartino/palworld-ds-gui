@@ -47,6 +47,7 @@
     "format": "prettier --write .",
     "lint": "eslint ./src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint ./src --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
+    "check-types": "tsc --noEmit",
     "magic": "pnpm run lint:fix && pnpm run format",
     "preview": "vite preview"
   }

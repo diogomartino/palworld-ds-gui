@@ -26,10 +26,11 @@ import {
   IconHammer,
   IconRefresh,
   IconSend,
+  IconTerminal2,
   IconUserCancel
 } from '@tabler/icons-react';
-import { ServerStatus, TGenericObject } from '../../types';
-import { requestConfirmation } from '../../actions/modal';
+import { Modal, ServerStatus, TGenericObject } from '../../types';
+import { openModal, requestConfirmation } from '../../actions/modal';
 import { TRconInfo, TRconPlayer } from '../../types/rcon';
 import useServerConfig from '../../hooks/use-server-config';
 import { ConfigKey } from '../../types/server-config';
@@ -225,12 +226,26 @@ const Admin = () => {
       }
       rightSlot={
         <div className="flex gap-2 w-full justify-center items-center">
-          {!serverConfig[ConfigKey.RCONEnabled] && (
+          {!serverConfig[ConfigKey.RCONEnabled] ? (
             <div>
               <Tooltip content="RCON is disabled on the local server. Enable RCON on the server settings to use this section.">
                 <IconAlertCircle size="1.3rem" color="yellow" />
               </Tooltip>
             </div>
+          ) : (
+            <Button
+              variant="shadow"
+              color="primary"
+              size="sm"
+              isDisabled={!isOnline}
+              isLoading={loading}
+              endContent={<IconTerminal2 size="0.9rem" />}
+              onClick={() => {
+                openModal(Modal.EXEC_RCON_COMMAND);
+              }}
+            >
+              Execute Command
+            </Button>
           )}
         </div>
       }

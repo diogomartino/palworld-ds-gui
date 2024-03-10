@@ -1,6 +1,6 @@
 import { appSliceActions } from '../store/app-slice';
 import { store } from '../store';
-import { TSettings } from '../types';
+import { TAdditionalSettings, TSettings } from '../types';
 import { settingsSelector } from '../selectors/app';
 import { ServerAPI } from '../server';
 import { serverSliceActions } from '../store/server-slice';
@@ -34,11 +34,11 @@ export const saveSettings = (settings?: TSettings) => {
 
 export const changeBackupSettings = async (
   enabled: boolean,
-  intervalHours: number,
+  interval: number,
   keepCount: number
 ) => {
   if (enabled) {
-    await ServerAPI.backups.start(+intervalHours, +keepCount);
+    await ServerAPI.backups.start(+interval, +keepCount);
   } else {
     await ServerAPI.backups.stop();
   }
@@ -46,28 +46,27 @@ export const changeBackupSettings = async (
   store.dispatch(
     serverSliceActions.setBackupSettings({
       enabled,
-      intervalHours,
+      interval,
       keepCount
     })
   );
 };
 
-export const changeTimedRestartSettings = async (
-  enabled: boolean,
-  intervalHours: number
+export const saveAdditionalSettings = async (
+  newSettings: TAdditionalSettings
 ) => {
-  if (enabled) {
-    await ServerAPI.timedRestart.start(+intervalHours);
-  } else {
-    await ServerAPI.timedRestart.stop();
-  }
+  // convert types to make sure
+  await ServerAPI.saveAdditionalSettings({
+    timedRestart: {
+      enabled: Boolean(newSettings.timedRestart.enabled),
+      interval: +newSettings.timedRestart.interval
+    },
+    restartOnCrash: {
+      enabled: Boolean(newSettings.restartOnCrash.enabled)
+    }
+  });
 
-  store.dispatch(
-    serverSliceActions.setTimedRestartSettings({
-      enabled,
-      intervalHours
-    })
-  );
+  store.dispatch(serverSliceActions.setAdditionalSettings(newSettings));
 };
 
 export const checkForUpdates = async () => {

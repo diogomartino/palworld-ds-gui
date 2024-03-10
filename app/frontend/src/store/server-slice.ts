@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { TConfig } from '../types/server-config';
 import {
   ServerStatus,
+  TAdditionalSettings,
   TBackup,
-  TBackupSettings,
-  TTimedRestartSettings
+  TBackupSettings
 } from '../types';
 
 export interface IServerState {
@@ -13,7 +13,7 @@ export interface IServerState {
   status: ServerStatus;
   backupsList: TBackup[];
   backupSettings: TBackupSettings;
-  timedRestartSettings: TTimedRestartSettings;
+  additionalSettings: TAdditionalSettings;
   version: string | undefined;
 }
 
@@ -24,12 +24,17 @@ const initialState: IServerState = {
   backupsList: [],
   backupSettings: {
     enabled: false,
-    intervalHours: 1,
+    interval: 1,
     keepCount: 24
   },
-  timedRestartSettings: {
-    enabled: false,
-    intervalHours: 4
+  additionalSettings: {
+    timedRestart: {
+      enabled: false,
+      interval: 4
+    },
+    restartOnCrash: {
+      enabled: false
+    }
   },
   version: undefined
 };
@@ -58,8 +63,8 @@ export const serverSlice = createSlice({
     setBackupSettings: (state, action) => {
       state.backupSettings = action.payload;
     },
-    setTimedRestartSettings: (state, action) => {
-      state.timedRestartSettings = action.payload;
+    setAdditionalSettings: (state, action) => {
+      state.additionalSettings = action.payload;
     },
     setVersion: (state, action) => {
       state.version = action.payload;

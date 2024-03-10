@@ -4,6 +4,7 @@ import { store } from '../store';
 import {
   Modal,
   ServerStatus,
+  TAdditionalSettings,
   TBackup,
   TBackupSettings,
   TClientInitedData,
@@ -68,7 +69,7 @@ export const onClientInited = (data: TClientInitedData) => {
   onServerConfigChanged(data.currentConfig);
   onServerSaveNameChanged(data.currentSaveName);
   onBackupSettingsUpdated(data.currentBackupsSettings);
-  onTimedRestartSettingsUpdated(data.currentTimedRestartSettings);
+  onAdditionalSettingsUpdated(data.currentAdditionalSettings);
   onBackupListUpdated(data.currentBackupsList);
 
   setServerVersion(data.serverVersion);
@@ -97,22 +98,25 @@ export const onBackupListUpdated = (data) => {
 export const onBackupSettingsUpdated = (data) => {
   const backupsSettings: TBackupSettings = {
     enabled: data.Enabled,
-    intervalHours: data.Interval,
+    interval: data.Interval,
     keepCount: data.KeepCount
   };
 
   store.dispatch(serverSliceActions.setBackupSettings(backupsSettings));
 };
 
-export const onTimedRestartSettingsUpdated = (data) => {
-  const timedRestartSettings = {
-    enabled: data.Enabled,
-    intervalHours: data.Interval
+export const onAdditionalSettingsUpdated = (data) => {
+  const additionalSettings: TAdditionalSettings = {
+    timedRestart: {
+      enabled: data.timedRestart.Enabled,
+      interval: data.timedRestart.Interval
+    },
+    restartOnCrash: {
+      enabled: data.restartOnCrash.Enabled
+    }
   };
 
-  store.dispatch(
-    serverSliceActions.setTimedRestartSettings(timedRestartSettings)
-  );
+  store.dispatch(serverSliceActions.setAdditionalSettings(additionalSettings));
 };
 
 export const onLaunchParamsChanged = (launchParams: string) => {

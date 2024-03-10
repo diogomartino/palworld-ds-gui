@@ -160,7 +160,7 @@ const Backups = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [settings, setSettings] = useState<TGenericObject>({
     enabled: currentBackupSettings.enabled,
-    intervalHours: currentBackupSettings.intervalHours,
+    interval: currentBackupSettings.interval,
     keepCount: currentBackupSettings.keepCount
   });
   const [errors, setErrors] = useState<TGenericObject>({});
@@ -187,11 +187,11 @@ const Backups = () => {
     const newErrors: TGenericObject = {};
 
     if (
-      isNaN(settings.intervalHours) ||
-      settings.intervalHours < 0 ||
-      settings.intervalHours > 24
+      isNaN(settings.interval) ||
+      settings.interval < 0 ||
+      settings.interval > 24
     ) {
-      newErrors.intervalHours = true;
+      newErrors.interval = true;
     }
 
     if (
@@ -210,7 +210,7 @@ const Backups = () => {
     setIsSaving(true);
     await changeBackupSettings(
       settings.enabled,
-      settings.intervalHours,
+      settings.interval,
       settings.keepCount
     );
     setIsSaving(false);
@@ -230,7 +230,7 @@ const Backups = () => {
   useEffect(() => {
     setSettings({
       enabled: currentBackupSettings.enabled,
-      intervalHours: currentBackupSettings.intervalHours,
+      interval: currentBackupSettings.interval,
       keepCount: currentBackupSettings.keepCount
     });
   }, [currentBackupSettings]);
@@ -255,7 +255,7 @@ const Backups = () => {
       <div className="flex items-center gap-4">
         <Input
           label="Interval"
-          isInvalid={!!errors.intervalHours}
+          isInvalid={!!errors.interval}
           isDisabled={!settings.enabled}
           labelPlacement="outside"
           min={0}
@@ -264,8 +264,8 @@ const Backups = () => {
           placeholder="1"
           type="number"
           endContent={<span className="text-sm">Hours</span>}
-          value={settings.intervalHours}
-          onChange={(e) => onSettingsChange('intervalHours', e.target.value)}
+          value={settings.interval}
+          onChange={(e) => onSettingsChange('interval', e.target.value)}
         />
 
         <Input
