@@ -7,27 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type AdditionalSettings struct {
-	TimedRestart   utils.PersistedTimedRestart   `json:"timedRestart"`
-	RestartOnCrash utils.PersistedRestartOnCrash `json:"restartOnCrash"`
-}
-
-type SaveAdditionalSettingsRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Data    struct {
-		NewSettings AdditionalSettings `json:"newSettings"`
-	}
-}
-
-type SaveAdditionalSettingsRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-	Data    string `json:"data"`
-}
-
 var saveAdditionalSettingsEvent = "SAVE_ADDITIONAL_SETTINGS"
 
 func SaveAdditionalSettingsHandler(conn *websocket.Conn, data []byte) {
@@ -36,7 +15,7 @@ func SaveAdditionalSettingsHandler(conn *websocket.Conn, data []byte) {
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(SaveAdditionalSettingsRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   saveAdditionalSettingsEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -56,7 +35,7 @@ func SaveAdditionalSettingsHandler(conn *websocket.Conn, data []byte) {
 		timedrestartmanager.Stop()
 	}
 
-	conn.WriteJSON(SaveAdditionalSettingsRes{
+	conn.WriteJSON(BaseResponse{
 		Event:   saveAdditionalSettingsEvent,
 		EventId: message.EventId,
 		Success: true,

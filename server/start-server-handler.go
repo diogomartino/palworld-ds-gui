@@ -7,29 +7,17 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type StartServerRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-}
-
-type StartServerRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
-
 var startServerEvent = "START_SERVER"
 
 func StartServerHandler(conn *websocket.Conn, data []byte) {
 	EmitServerStatus("STARTING", nil)
 
-	var message StartServerRequest
+	var message BaseRequest
 
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(StartServerRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   startServerEvent,
 			EventId: message.EventId,
 			Success: false,

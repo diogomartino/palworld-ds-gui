@@ -7,20 +7,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type StopServerRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Data    struct {
-		LaunchParams []string `json:"launchParams"`
-	}
-}
-
 var stopServerEvent = "STOP_SERVER"
 
 func StopServerHandler(conn *websocket.Conn, data []byte) {
 	EmitServerStatus("STOPPING", nil)
 
-	var message StopServerRequest
+	var message BaseRequest
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())

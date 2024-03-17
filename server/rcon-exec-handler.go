@@ -7,33 +7,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type RconExecHandlerRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Data    struct {
-		Hostname string `json:"hostname"`
-		Password string `json:"password"`
-		Command  string `json:"command"`
-	}
-}
-
-type RconExecHandlerRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-	Data    string `json:"data"`
-}
-
 var rconExecHandlerEvent = "RCON_EXECUTE"
 
 func RconExecHandlerHandler(conn *websocket.Conn, data []byte) {
-	var message RconExecHandlerRequest
+	var message RconExecRequest
 
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(RconExecHandlerRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   rconExecHandlerEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -44,8 +26,8 @@ func RconExecHandlerHandler(conn *websocket.Conn, data []byte) {
 	result, err := rconclient.Execute(message.Data.Hostname, message.Data.Password, message.Data.Command)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(RestoreBackupRes{
-			Event:   restoreBackupEvent,
+		conn.WriteJSON(BaseResponse{
+			Event:   rconExecHandlerEvent,
 			EventId: message.EventId,
 			Success: false,
 			Error:   err.Error(),
@@ -53,10 +35,12 @@ func RconExecHandlerHandler(conn *websocket.Conn, data []byte) {
 		return
 	}
 
-	conn.WriteJSON(RconExecHandlerRes{
-		Event:   rconExecHandlerEvent,
-		EventId: message.EventId,
-		Success: true,
-		Data:    result,
+	conn.WriteJSON(SimpleResponse{
+		BaseResponse: BaseResponse{
+			Event:   rconExecHandlerEvent,
+			EventId: message.EventId,
+			Success: true,
+		},
+		Data: result,
 	})
 }

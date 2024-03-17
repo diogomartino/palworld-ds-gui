@@ -19,14 +19,6 @@ type GetSteamAvatarRequest struct {
 	}
 }
 
-type GetSteamAvatarRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-	Data    string `json:"data"`
-}
-
 type CacheEntry struct {
 	AvatarURL string
 	Expires   time.Time
@@ -43,7 +35,7 @@ func GetSteamAvatarHandler(conn *websocket.Conn, data []byte) {
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(GetSteamAvatarRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   getSteamAvatarEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -55,8 +47,8 @@ func GetSteamAvatarHandler(conn *websocket.Conn, data []byte) {
 	imageUrl, err := GetSteamProfileAvatar(message.Data.SteamId64)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(GetBackupsRes{
-			Event:   getBackupsEvent,
+		conn.WriteJSON(BaseResponse{
+			Event:   getSteamAvatarEvent,
 			EventId: message.EventId,
 			Success: false,
 			Error:   err.Error(),
@@ -64,11 +56,13 @@ func GetSteamAvatarHandler(conn *websocket.Conn, data []byte) {
 		return
 	}
 
-	conn.WriteJSON(GetSteamAvatarRes{
-		Event:   getSteamAvatarEvent,
-		EventId: message.EventId,
-		Success: true,
-		Data:    imageUrl,
+	conn.WriteJSON(SimpleResponse{
+		BaseResponse: BaseResponse{
+			Event:   getSteamAvatarEvent,
+			EventId: message.EventId,
+			Success: true,
+		},
+		Data: imageUrl,
 	})
 }
 

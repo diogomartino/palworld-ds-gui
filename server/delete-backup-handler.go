@@ -7,22 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type DeleteBackupRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Data    struct {
-		Filename string `json:"backupFileName"`
-	}
-}
-
-type DeleteBackupRes struct {
-	Event   string   `json:"event"`
-	EventId string   `json:"eventId"`
-	Success bool     `json:"success"`
-	Error   string   `json:"error"`
-	Data    []Backup `json:"data"`
-}
-
 var deleteBackupEvent = "DELETE_BACKUP"
 
 func DeleteBackupHandler(conn *websocket.Conn, data []byte) {
@@ -31,7 +15,7 @@ func DeleteBackupHandler(conn *websocket.Conn, data []byte) {
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(DeleteBackupRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   deleteBackupEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -43,7 +27,7 @@ func DeleteBackupHandler(conn *websocket.Conn, data []byte) {
 	err = backupmanager.Delete(message.Data.Filename)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(DeleteBackupRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   deleteBackupEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -51,8 +35,9 @@ func DeleteBackupHandler(conn *websocket.Conn, data []byte) {
 		})
 		return
 	}
-	conn.WriteJSON(CreateBackupRes{
-		Event:   createBackupEvent,
+
+	conn.WriteJSON(BaseResponse{
+		Event:   deleteBackupEvent,
 		EventId: message.EventId,
 		Success: true,
 	})

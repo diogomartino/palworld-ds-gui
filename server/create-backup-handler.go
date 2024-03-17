@@ -7,18 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type CreateBackupRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-}
-
-type CreateBackupRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
-
 var createBackupEvent = "CREATE_BACKUP"
 
 func CreateBackupHandler(conn *websocket.Conn, data []byte) {
@@ -27,7 +15,7 @@ func CreateBackupHandler(conn *websocket.Conn, data []byte) {
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(StartBackupsRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   startBackupsEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -42,7 +30,7 @@ func CreateBackupHandler(conn *websocket.Conn, data []byte) {
 		success = false
 	}
 
-	conn.WriteJSON(CreateBackupRes{
+	conn.WriteJSON(BaseResponse{
 		Event:   createBackupEvent,
 		EventId: message.EventId,
 		Success: success,

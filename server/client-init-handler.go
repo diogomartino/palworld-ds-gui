@@ -7,42 +7,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type ClientInitRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Data    struct {
-		NewSaveName string `json:"saveName"`
-	}
-}
-
-type ClientInitResData struct {
-	CurrentServerStatus       string                        `json:"currentServerStatus"`
-	CurrentLaunchParams       string                        `json:"currentLaunchParams"`
-	CurrentConfig             string                        `json:"currentConfig"`
-	CurrentSaveName           string                        `json:"currentSaveName"`
-	CurrentBackupsSettings    utils.PersistedSettingsBackup `json:"currentBackupsSettings"`
-	CurrentAdditionalSettings AdditionalSettings            `json:"currentAdditionalSettings"`
-	CurrentBackupsList        []Backup                      `json:"currentBackupsList"`
-	ServerVersion             string                        `json:"serverVersion"`
-}
-
-type ClientInitRes struct {
-	Event   string            `json:"event"`
-	EventId string            `json:"eventId"`
-	Success bool              `json:"success"`
-	Error   string            `json:"error"`
-	Data    ClientInitResData `json:"data"`
-}
-
 var clientInitEvent = "INIT"
 
 func ClientInitHandler(conn *websocket.Conn, data []byte) {
-	var message ClientInitRequest
+	var message BaseRequest
 
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(ClientInitRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   clientInitEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -62,17 +35,24 @@ func ClientInitHandler(conn *websocket.Conn, data []byte) {
 		backupsList = []Backup{}
 	}
 
-	conn.WriteJSON(ClientInitRes{
-		Event:   clientInitEvent,
-		EventId: message.EventId,
-		Success: true,
+	additionalSettings := AdditionalSettings{
+		TimedRestart:   utils.Settings.TimedRestart,
+		RestartOnCrash: utils.Settings.RestartOnCrash,
+	}
+
+	conn.WriteJSON(ClientInitResponse{
+		BaseResponse: BaseResponse{
+			Event:   clientInitEvent,
+			EventId: message.EventId,
+			Success: true,
+		},
 		Data: ClientInitResData{
 			CurrentServerStatus:       currentState,
 			CurrentLaunchParams:       utils.Settings.General.LaunchParams,
 			CurrentConfig:             ReadConfig(),
 			CurrentSaveName:           ReadSaveName(),
 			CurrentBackupsSettings:    utils.Settings.Backup,
-			CurrentAdditionalSettings: AdditionalSettings{utils.Settings.TimedRestart, utils.Settings.RestartOnCrash},
+			CurrentAdditionalSettings: additionalSettings,
 			CurrentBackupsList:        backupsList,
 			ServerVersion:             utils.Config.ServerVersion,
 		},

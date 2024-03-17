@@ -12,14 +12,6 @@ type GetBackupsConfigRequest struct {
 	EventId string `json:"eventId"`
 }
 
-type GetBackupsConfigRes struct {
-	Event   string                        `json:"event"`
-	EventId string                        `json:"eventId"`
-	Success bool                          `json:"success"`
-	Error   string                        `json:"error"`
-	Data    utils.PersistedSettingsBackup `json:"data"`
-}
-
 var getBackupsConfigEvent = "GET_BACKUPS_SETTINGS"
 
 func GetBackupsConfigHandler(conn *websocket.Conn, data []byte) {
@@ -28,7 +20,7 @@ func GetBackupsConfigHandler(conn *websocket.Conn, data []byte) {
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(GetBackupsConfigRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   getBackupsConfigEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -37,10 +29,12 @@ func GetBackupsConfigHandler(conn *websocket.Conn, data []byte) {
 		return
 	}
 
-	conn.WriteJSON(GetBackupsConfigRes{
-		Event:   getBackupsConfigEvent,
-		EventId: message.EventId,
-		Success: true,
-		Data:    utils.Settings.Backup,
+	conn.WriteJSON(GetBackupsConfigResponse{
+		BaseResponse: BaseResponse{
+			Event:   getBackupsConfigEvent,
+			EventId: message.EventId,
+			Success: true,
+		},
+		Data: utils.Settings.Backup,
 	})
 }

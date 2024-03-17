@@ -7,27 +7,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type StopBackupsRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-}
-
-type StopBackupsRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
-
 var stopBackupsEvent = "STOP_BACKUPS"
 
 func StopBackupsHandler(conn *websocket.Conn, data []byte) {
-	var message StopBackupsRequest
+	var message BaseRequest
 
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(StopBackupsRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   stopBackupsEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -37,7 +25,7 @@ func StopBackupsHandler(conn *websocket.Conn, data []byte) {
 
 	backupmanager.Stop()
 
-	conn.WriteJSON(StopBackupsRes{
+	conn.WriteJSON(BaseResponse{
 		Event:   stopBackupsEvent,
 		EventId: message.EventId,
 		Success: true,

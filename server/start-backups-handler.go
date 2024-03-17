@@ -7,22 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type StartBackupsRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Data    struct {
-		Interval  float32 `json:"interval"`
-		KeepCount int     `json:"keepCount"`
-	}
-}
-
-type StartBackupsRes struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-	Success bool   `json:"success"`
-	Error   string `json:"error"`
-}
-
 var startBackupsEvent = "START_BACKUPS"
 
 func StartBackupsHandler(conn *websocket.Conn, data []byte) {
@@ -31,7 +15,7 @@ func StartBackupsHandler(conn *websocket.Conn, data []byte) {
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(StartBackupsRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   startBackupsEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -41,7 +25,7 @@ func StartBackupsHandler(conn *websocket.Conn, data []byte) {
 
 	backupmanager.Start(message.Data.Interval, message.Data.KeepCount)
 
-	conn.WriteJSON(StartBackupsRes{
+	conn.WriteJSON(BaseResponse{
 		Event:   startBackupsEvent,
 		EventId: message.EventId,
 		Success: true,

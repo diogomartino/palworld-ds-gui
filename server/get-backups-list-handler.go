@@ -7,28 +7,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type GetBackupsRequest struct {
-	Event   string `json:"event"`
-	EventId string `json:"eventId"`
-}
-
-type GetBackupsRes struct {
-	Event   string   `json:"event"`
-	EventId string   `json:"eventId"`
-	Success bool     `json:"success"`
-	Error   string   `json:"error"`
-	Data    []Backup `json:"data"`
-}
-
 var getBackupsEvent = "GET_BACKUPS_LIST"
 
 func GetBackupsHandler(conn *websocket.Conn, data []byte) {
-	var message GetBackupsRequest
+	var message BaseRequest
 
 	err := json.Unmarshal(data, &message)
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(GetBackupsRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   getBackupsEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -40,7 +27,7 @@ func GetBackupsHandler(conn *websocket.Conn, data []byte) {
 	list, err := backupmanager.GetBackupsList()
 	if err != nil {
 		utils.Log(err.Error())
-		conn.WriteJSON(GetBackupsRes{
+		conn.WriteJSON(BaseResponse{
 			Event:   getBackupsEvent,
 			EventId: message.EventId,
 			Success: false,
@@ -49,10 +36,12 @@ func GetBackupsHandler(conn *websocket.Conn, data []byte) {
 		return
 	}
 
-	conn.WriteJSON(GetBackupsRes{
-		Event:   getBackupsEvent,
-		EventId: message.EventId,
-		Success: true,
-		Data:    list,
+	conn.WriteJSON(GetBackupsResponse{
+		BaseResponse: BaseResponse{
+			Event:   getBackupsEvent,
+			EventId: message.EventId,
+			Success: true,
+		},
+		Data: list,
 	})
 }
