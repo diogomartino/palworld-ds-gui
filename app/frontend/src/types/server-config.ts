@@ -64,7 +64,13 @@ export enum ConfigKey {
   PalStaminaDecreaceRate = 'PalStaminaDecreaceRate',
   PalStomachDecreaceRate = 'PalStomachDecreaceRate',
   PlayerStaminaDecreaceRate = 'PlayerStaminaDecreaceRate',
-  PlayerStomachDecreaceRate = 'PlayerStomachDecreaceRate'
+  PlayerStomachDecreaceRate = 'PlayerStomachDecreaceRate',
+  RESTAPIEnabled = 'RESTAPIEnabled',
+  RESTAPIPort = 'RESTAPIPort',
+  bShowPlayerList = 'bShowPlayerList',
+  AllowConnectPlatform = 'AllowConnectPlatform',
+  bIsUseBackupSaveData = 'bIsUseBackupSaveData',
+  LogFormatType = 'LogFormatType'
 }
 
 export type TConfig = {
@@ -134,6 +140,12 @@ export type TConfig = {
   [ConfigKey.PalStomachDecreaceRate]: number;
   [ConfigKey.PlayerStaminaDecreaceRate]: number;
   [ConfigKey.PlayerStomachDecreaceRate]: number;
+  [ConfigKey.RESTAPIEnabled]: boolean;
+  [ConfigKey.RESTAPIPort]: number;
+  [ConfigKey.bShowPlayerList]: boolean;
+  [ConfigKey.AllowConnectPlatform]: string;
+  [ConfigKey.bIsUseBackupSaveData]: boolean;
+  [ConfigKey.LogFormatType]: string;
 };
 
 export const configLabels = {
@@ -210,7 +222,13 @@ export const configLabels = {
   [ConfigKey.PalStaminaDecreaceRate]: 'Pal Stamina Decrease Rate (Typo Fix)',
   [ConfigKey.PalStomachDecreaceRate]: 'Pal Stomach Decrease Rate',
   [ConfigKey.PlayerStaminaDecreaceRate]: 'Player Stamina Decrease Rate',
-  [ConfigKey.PlayerStomachDecreaceRate]: 'Player Stomach Decrease Rate'
+  [ConfigKey.PlayerStomachDecreaceRate]: 'Player Stomach Decrease Rate',
+  [ConfigKey.RESTAPIEnabled]: 'REST API Enabled',
+  [ConfigKey.RESTAPIPort]: 'REST API Port',
+  [ConfigKey.bShowPlayerList]: 'Show Player List',
+  [ConfigKey.AllowConnectPlatform]: 'Allow Connect Platform',
+  [ConfigKey.bIsUseBackupSaveData]: 'Is Use Backup Save Data',
+  [ConfigKey.LogFormatType]: 'Log Format Type'
 };
 
 export const configTypes = {
@@ -279,5 +297,10 @@ export const configTypes = {
   PalStaminaDecreaceRate: 'number',
   PalStomachDecreaceRate: 'number',
   PlayerStaminaDecreaceRate: 'number',
-  PlayerStomachDecreaceRate: 'number'
+  PlayerStomachDecreaceRate: 'number',
+  RESTAPIEnabled: 'boolean',
+  RESTAPIPort: 'number',
+  bShowPlayerList: 'boolean',
+  AllowConnectPlatform: 'string',
+  bIsUseBackupSaveData: 'boolean'
 };
