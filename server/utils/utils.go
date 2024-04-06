@@ -165,7 +165,7 @@ func InitWindowsConfigs() {
 	Config.ServerGameUserSettingsPath = filepath.Join(GetCurrentDir(), Launch.ServerPath, "Pal", "Saved", "Config", "WindowsServer", "GameUserSettings.ini")
 	Config.ServerSaveDir = filepath.Join(GetCurrentDir(), Launch.ServerPath, "Pal", "Saved", "SaveGames", "0")
 	Config.LogsPath = filepath.Join(GetCurrentDir(), "logs.txt")
-	Config.ServerProcessName = "PalServer-Win64-Test-Cmd.exe"
+	Config.ServerProcessName = "PalServer-Win64-Shipping-Cmd.exe"
 	Config.BackupsPath = filepath.Join(GetCurrentDir(), "backups")
 	Config.PersistedSettingsPath = filepath.Join(GetCurrentDir(), "gui-server-settings.ini")
 	Config.SteamCmdUrl = "https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip"
