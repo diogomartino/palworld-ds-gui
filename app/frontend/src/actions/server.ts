@@ -1,11 +1,28 @@
 import { serverSliceActions } from '../store/server-slice';
 import { store } from '../store';
-import { TConfig } from '../types/server-config';
+import { ConfigKey, TConfig, configTypes } from '../types/server-config';
 import { ServerStatus } from '../types';
 import { consolesSliceActions } from '../store/console-slice';
 
 export const setConfig = (config: TConfig) => {
-  store.dispatch(serverSliceActions.setConfig(config));
+  const allConfigKeys = Object.keys(ConfigKey);
+  const mergedConfig = allConfigKeys.reduce((acc, key) => {
+    if (config[key]) {
+      acc[key] = config[key];
+    } else {
+      const type = configTypes[key];
+
+      if (type === 'boolean') {
+        acc[key] = false;
+      } else {
+        acc[key] = '';
+      }
+    }
+
+    return acc;
+  }, {} as TConfig); // merge config keys that might not exist in the incoming config (eg: new config keys for a new server version)
+
+  store.dispatch(serverSliceActions.setConfig(mergedConfig));
 };
 
 export const setSaveName = (saveName: string) => {
